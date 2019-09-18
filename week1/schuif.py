@@ -4,13 +4,13 @@ class schuif:
         self.numbs = numbs
         self.size = size
         self.makeBoard()
-        self.empty = self.findEmpty()
+        self.empty = self.findEmpty(self.board)
         self.foundMoves = 999999999
         self.winningHistory = []
 
-    def findEmpty(self):
+    def findEmpty(self, board):
         i = 0
-        for x in self.board:
+        for x in board:
             if x == 0:
                 return i
             i += 1
@@ -34,9 +34,9 @@ class schuif:
         ret += "\n"
         print(ret)
 
-    def isDone(self):
+    def isDone(self, board):
         for x in range(1, self.size*self.size):
-            if self.board[x-1] != x:
+            if board[x-1] != x:
                 return False
         return True
 
@@ -47,37 +47,90 @@ class schuif:
             ret += [cur-self.size,]
         if cur < self.size*(self.size-1):
             ret += [cur+self.size,]
-        if (cur-1)%self.size == 0:
-            ret += [cur-1, ]
-        if (cur % self.size) == 0:
+        if (cur%self.size) != 0:
+            ret += [cur-1,]
+        if (cur % self.size) < self.size-1:
             ret += [cur+1, ]
         return ret
 
-    def startLoop(self):
-        self.loop(self.board, [self.empty, ], 0, [])
+    def startLoop(self, heuristic):
+        self.loop(self.board,[],  heuristic)
 
-    def loop(self, currentBoard, history, currentMoveAmount, globalHistory):
+    class boardState():
+        def __init__(self, board, moves, history):
+            self.board = board
+            self.moves = moves
+            self.history = history
+
+        def updateMovesAndHistory(self, moves, history):
+            self.moves = moves;
+            self.history = history
+
+    def loop(self, currentBoard, globalHistory, heuristic):
         # if currentBoard in globalHistory:
         #     return False
-        globalHistory += [currentBoard, ]
-        if self.isDone():
-            self.foundMoves = currentMoveAmount
-            self.winningHistory = history
-            print("FOUND WINNING BOARD IN ", currentMoveAmount, " MOVES! : ", self.winningHistory)
-            return True
-        if currentMoveAmount > self.foundMoves:
-            return False
-        newMoveAmount = currentMoveAmount + 1
-        empty = history[len(history)-1]
-        if len(history)>3 and empty == history[len(history) - 3]:
-            return
-        for x in self.getNextPositions(empty):
-            newCurBoard = currentBoard.copy()
-            newCurBoard[empty] = newCurBoard[x]
-            newCurBoard[x] = 0
-            self.printBoard(newCurBoard)
-            newHistory = history + [x, ]
-            self.loop(newCurBoard, newHistory, newMoveAmount, globalHistory)
+        boardsToExplore = [self.boardState(currentBoard, 0, [])]
+        while boardsToExplore:
+            bs = boardsToExplore[0]
+            board = bs.board
+            for x in globalHistory:
+                if x.board == board:
+                    if x.moves > bs.moves:
+                        x.moves = bs.moves
+                        x.history = bs.history
+                    del boardsToExplore[0]
+                    board = None
+                    break
+                continue
+            if not board:
+                continue
+            else:
+                globalHistory += [bs, ]
+            print(board, heuristic(board))
+            if self.isDone(board):
+                print("FOUND WINNING BOARD IN ", bs.moves , " MOVES! : ", bs.history)
+                print("History Boards: ")
+                self.printHistoryBoards(currentBoard,bs.history)
+                return True
+            empty = self.findEmpty(board)
+            del boardsToExplore[0]
+            for x in self.getNextPositions(empty):
+                newCurBoard = board.copy()
+                newCurBoard[empty] = newCurBoard[x]
+                newCurBoard[x] = 0
+                newHis = bs.history + [x, ]
+                boardsToExplore = self.insertIntoArray(boardsToExplore, self.boardState(newCurBoard, bs.moves+1, newHis), heuristic)
+
+    def misplaced_heuristic(self, board):
+        score = 0
+        for x in range(1, len(board) + 1):
+            y = board[x - 1]
+            if y != 0 and y != x:
+                score += 1
+        return score
+
+    def no_heuristic(self, board):
+        return 0
+
+    def printHistoryBoards(self, start, history):
+        self.printBoard(start)
+        for x in history:
+            empty = self.findEmpty(start)
+            start[empty] = start[x]
+            start[x] = 0
+            self.printBoard(start)
+
+    def insertIntoArray(self, array, boardState, heuristic):
+        i = 0
+        boardHeur = heuristic(boardState.board)
+        for x in array:
+            if heuristic(x.board) > boardHeur:
+                array = array[:i] + [boardState, ] + array[i:]
+                return array
+            i += 1
+        array += [boardState, ]
+        return array
+
 
 
 
@@ -86,4 +139,4 @@ class schuif:
 
 
 s = schuif(3, "867254301")
-s.startLoop()
+s.startLoop(s.misplaced_heuristic)
