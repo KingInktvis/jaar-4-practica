@@ -15,10 +15,9 @@ class schuif:
                 return i
             i += 1
 
-
     def makeBoard(self):
         if not self.numbs:
-            self.board = [x for x in range(0, self.size*self.size)]
+            self.board = [x for x in range(0, self.size * self.size)]
             return
         self.board = [int(x) for x in self.numbs]
 
@@ -29,14 +28,14 @@ class schuif:
             if i >= self.size:
                 i = 0
                 ret += "\n"
-            i+=1
+            i += 1
             ret += str(x) + " "
         ret += "\n"
         print(ret)
 
     def isDone(self, board):
-        for x in range(1, self.size*self.size):
-            if board[x-1] != x:
+        for x in range(1, self.size * self.size):
+            if board[x - 1] != x:
                 return False
         return True
 
@@ -44,17 +43,18 @@ class schuif:
         ret = []
         cur = empty
         if cur >= self.size:
-            ret += [cur-self.size,]
-        if cur < self.size*(self.size-1):
-            ret += [cur+self.size,]
-        if (cur%self.size) != 0:
-            ret += [cur-1,]
-        if (cur % self.size) < self.size-1:
-            ret += [cur+1, ]
+            ret += [cur - self.size, ]
+        if cur < self.size * (self.size - 1):
+            ret += [cur + self.size, ]
+        if (cur % self.size) != 0:
+            ret += [cur - 1, ]
+        if (cur % self.size) < self.size - 1:
+            ret += [cur + 1, ]
         return ret
 
+    # start het zoeken
     def startLoop(self, heuristic):
-        self.loop(self.board,[],  heuristic)
+        self.loop(self.board, [], heuristic)
 
     class boardState():
         def __init__(self, board, moves, history):
@@ -63,7 +63,7 @@ class schuif:
             self.history = history
 
         def updateMovesAndHistory(self, moves, history):
-            self.moves = moves;
+            self.moves = moves
             self.history = history
 
     def loop(self, currentBoard, globalHistory, heuristic):
@@ -73,6 +73,7 @@ class schuif:
         while boardsToExplore:
             bs = boardsToExplore[0]
             board = bs.board
+            # sla bord over als deze al eerder is bezocht
             for x in globalHistory:
                 if x.board == board:
                     if x.moves > bs.moves:
@@ -87,20 +88,24 @@ class schuif:
             else:
                 globalHistory += [bs, ]
             print(board, heuristic(board))
+            # controleer of dit de oplossing is voor de puzzel
             if self.isDone(board):
-                print("FOUND WINNING BOARD IN ", bs.moves , " MOVES! : ", bs.history)
+                print("FOUND WINNING BOARD IN ", bs.moves, " MOVES! : ", bs.history)
                 print("History Boards: ")
-                self.printHistoryBoards(currentBoard,bs.history)
+                self.printHistoryBoards(currentBoard, bs.history)
                 return True
             empty = self.findEmpty(board)
             del boardsToExplore[0]
+            # maak borden voor alle mogelelijke stappen
             for x in self.getNextPositions(empty):
                 newCurBoard = board.copy()
                 newCurBoard[empty] = newCurBoard[x]
                 newCurBoard[x] = 0
                 newHis = bs.history + [x, ]
-                boardsToExplore = self.insertIntoArray(boardsToExplore, self.boardState(newCurBoard, bs.moves+1, newHis), heuristic)
+                boardsToExplore = self.insertIntoArray(boardsToExplore,
+                                                       self.boardState(newCurBoard, bs.moves + 1, newHis), heuristic)
 
+    # score +1 voor elk getal dat niet op de juiste plek staat
     def misplaced_heuristic(self, board):
         score = 0
         for x in range(1, len(board) + 1):
@@ -109,6 +114,7 @@ class schuif:
                 score += 1
         return score
 
+    # weet niet waarom deze bestaat
     def no_heuristic(self, board):
         return 0
 
@@ -120,6 +126,7 @@ class schuif:
             start[x] = 0
             self.printBoard(start)
 
+    # Maak een nieuwe array aan en met de boardstate. Deze array is gesorteerd op de heuristic waarde
     def insertIntoArray(self, array, boardState, heuristic):
         i = 0
         boardHeur = heuristic(boardState.board)
@@ -130,12 +137,6 @@ class schuif:
             i += 1
         array += [boardState, ]
         return array
-
-
-
-
-
-
 
 
 s = schuif(3, "867254301")
