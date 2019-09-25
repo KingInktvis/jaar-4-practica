@@ -36,10 +36,10 @@ def tour_length(tour):
                for i in range(len(tour)))
 
 
-def make_cities(n, width=1000, height=1000):
+def make_cities(n, seed=0, width=1000, height=1000):
     # make a set of n cities, each with random coordinates within a rectangle (width x height).
 
-    random.seed(0)  # the current system time is used as a seed
+    random.seed(seed)  # the current system time is used as a seed
     # note: if we use the same seed, we get the same set of cities
 
     return frozenset(City(random.randrange(width), random.randrange(height))
@@ -77,16 +77,65 @@ def find_nn(city, options):
     return best
 
 
+def switch_edges(path, vertex_index_1, vertex_index_2):
+    start = path[:vertex_index_1] if vertex_index_1 > 0 else []
+    end = path[vertex_index_2+1:]
+    mid = path[vertex_index_1:vertex_index_2+1]
+    mid.reverse()
+    new = start + mid + end
+    return new
+
+
+def remove_intersections(path):
+    tour = path[:]
+    for i in range(len(tour) - 2):
+        c1 = tour[i]
+        c2 = tour[i + 1]
+        for j in range(i + 1, len(tour)):
+            c3 = tour[j]
+            if j < len(tour) - 1:
+                c4 = tour[j + 1]
+            else:
+                c4 = tour[0]
+
+            if is_intersecting(c1, c2, c3, c4):
+                tour = switch_edges(tour, i+1, j)
+    return tour
+
+
+def nn_no_intersection_algorithm(tour):
+    nn = nn_algorithm(tour)
+    improve = remove_intersections(nn)
+    # improve2 = remove_intersections(improve)
+    return improve
+
+
 def is_intersecting(city1, city2, city3, city4):
     domain = shared_domain(city1, city2, city3, city4)
     if domain is None:
         return False
+    if city1 == city3 or city1 == city4 or city2 == city3 or city2 == city4:
+        return False
+
     f1 = get_function(city1, city2)
     f2 = get_function(city3, city4)
     start1 = f1(domain[0])
     start2 = f2(domain[0])
     end1 = f1(domain[1])
     end2 = f2(domain[1])
+    if city1.x == city2.x:
+        if city3.x == city4.x:
+            return in_range(city1, city2, city3, city4)
+        if city2.y < f2(city1.x) < city1.y or city2.y > f2(city1.x) > city1.y:
+            return True
+        else:
+            return False
+    if city3.x == city4.x:
+        if city4.y < f1(city3.x) < city3.y or city4.y > f1(city3.x) > city3.y:
+            return True
+        else:
+            return False
+
     if start1 == start2 or end1 == end2:
         return False
     elif start1 > start2 and end1 > end2:
@@ -98,19 +147,12 @@ def is_intersecting(city1, city2, city3, city4):
 
 
 def get_function(city1, city2):
-    if city2.x - city1.x == 0:
-        return lambda x: city1.y if x < city1.x else city2.y
+    if city2.x == city1.x:
+        return lambda x: None
     a = (city2.y - city1.y) / (city2.x - city1.x)
     b = city1.y - a * city1.x
     function = lambda x: a * x + b
     return function
-
-
-def in_reach(city1, city2, city3, city4):
-    if in_domain(city1, city2, city3, city4) and in_range(city1, city2, city3, city4):
-        return True
-    else:
-        return False
 
 
 def shared_domain(city1, city2, city3, city4):
@@ -180,12 +222,12 @@ def in_range(city1, city2, city3, city4):
 
 def count_intersections(tour):
     count = 0
-    for i in range(len(tour)-1):
+    for i in range(len(tour) - 2):
         c1 = tour[i]
-        c2 = tour[i+1]
-        for j in range(i+1, len(tour)):
+        c2 = tour[i + 1]
+        for j in range(i + 1, len(tour)):
             c3 = tour[j]
-            if j < len(tour)-1:
+            if j < len(tour) - 1:
                 c4 = tour[j + 1]
             else:
                 c4 = tour[0]
@@ -210,7 +252,8 @@ def plot_tsp(algorithm, cities):
 
 
 # plot_tsp(try_all_tours, make_cities(10))
-# plot_tsp(nn_algorithm, make_cities(10))
+plot_tsp(nn_algorithm, make_cities(500, 0))
+plot_tsp(nn_no_intersection_algorithm, make_cities(500, 0))
 
 
 class TestStringMethods(unittest.TestCase):
@@ -218,6 +261,7 @@ class TestStringMethods(unittest.TestCase):
     c2 = City(x=3, y=4)
     c3 = City(x=1, y=2)
     c4 = City(x=4, y=4)
+    c5 = City(x=3, y=3)
 
     def test_domain(self):
         self.assertTrue(in_domain(self.c1, self.c2, self.c3, self.c4))
@@ -240,9 +284,30 @@ class TestStringMethods(unittest.TestCase):
         c4 = City(x=6, y=6)
         c5 = City(x=3, y=3)
         tour = (c1, c2, c3, c4, c5)
-        plot_tour(tour)
         self.assertEqual(count_intersections(tour), 1)
 
+        cities = make_cities(10, 0)
+        tour = nn_algorithm(cities)
+        self.assertEqual(count_intersections(tour), 2)
 
-if __name__ == '__main__':
-    unittest.main()
+        cities = make_cities(10, 2)
+        tour = nn_algorithm(cities)
+        self.assertEqual(count_intersections(tour), 3)
+
+    def test_edge_swap(self):
+        tour = [self.c1, self.c2, self.c3, self.c4, self.c5]
+        check = [self.c1, self.c4, self.c3, self.c2, self.c5]
+        self.assertEqual(switch_edges(tour, 1, 3), check)
+
+
+# if __name__ == '__main__':
+#     unittest.main()
+
+
+def city_intersection_correlation():
+    for i in range(1, 100):
+        tour = nn_algorithm(make_cities(i, 0))
+        print(count_intersections(tour))
+
+
+# city_intersection_correlation()
