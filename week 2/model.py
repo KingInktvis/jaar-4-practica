@@ -154,5 +154,46 @@ def test():
 def get_random_move():
     return random.choice(list(MERGE_FUNCTIONS.keys()))
 
-def get_expectimax_move(b):
-    pass
+
+
+def get_expectimax_move(board, depth, make_move=False, initial_move=False):
+    if depth<=0 or (make_move and not move_exists(board)):
+        return -1, heuristic(board)
+    best_move = None
+    best_score = -99999999
+    if make_move:
+        for move_direction in MERGE_FUNCTIONS.keys():
+            new_board = board.copy()
+            new_board = play_move(new_board, move_direction)
+            new_score = get_expectimax_move(new_board, depth-1)  #returns best_move, best_score
+            if new_score[1] > best_score:
+                best_score = new_score[1]
+                best_move = move_direction
+        if initial_move:
+            return best_move
+        return (best_move, best_score)
+    else:
+        score_calculation = 0
+        empty_locations = [(i,j) for i,j in itertools.product(range(4),range(4)) if board[i][j]==0] # get all locations of empty spots
+        for i,j in empty_locations:
+            copy_add_two = board.copy()
+            copy_add_four = board.copy()
+            copy_add_two[i][j] = 2
+            copy_add_four[i][j] = 4
+            score_board_two = 0.9*get_expectimax_move(copy_add_two, depth-1, True)[1]
+            score_board_four = 0.1*get_expectimax_move(copy_add_four, depth-1, True)[1]
+            score_calculation += score_board_two + score_board_four
+        return (1, score_calculation)
+
+
+def heuristic(board):
+    if not move_exists(board):
+        return -float("inf")
+
+    snake = []
+    for i, col in enumerate(zip(*board)):
+        snake.extend(reversed(col) if i % 2 == 0 else col)
+
+    m = max(snake)
+    return sum(x/10**n for n, x in enumerate(snake)) - \
+           math.pow((board[3][0] != m)*abs(board[3][0] - m), 2)
