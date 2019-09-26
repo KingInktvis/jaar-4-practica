@@ -247,7 +247,6 @@ def plot_tsp(algorithm, cities):
     print("{} city tour with length {:.1f} in {:.3f} secs for {}"
           .format(len(tour), tour_length(tour), exec_time, algorithm.__name__))
     print("Start plotting ...")
-    print(count_intersections(tour))
     plot_tour(tour)
 
 
@@ -312,66 +311,43 @@ def edge_length(edge):
     return distance
 
 
-def random_algorithm(cities):
-    tour = nn_algorithm(cities)
+def two_opt(cities):
+    tour = []
     # for c in cities:
     #     tour.append(c)
-    return random_improvements_2(tour)
-
-
-def random_improvements(tour):
-    edges = []
-    for i in range(len(tour) - 1):
-        edge = [tour[i], tour[i + 1]]
-        edges.append(edge)
-    edge = [tour[len(tour)-1], tour[0]]
-    edges.append(edge)
+    tour = nn_algorithm(cities)
     for _ in range(1000):
-        set = random.sample(edges, 2)
-        original = edge_length(set[0]) + edge_length(set[1])
-        swap_edge_set_ends(set)
-        if set[0][0] == set[0][1] or set[1][0] == set[1][1]:
-            swap_edge_set_ends(set)
-            continue
-        new_length = edge_length(set[0]) + edge_length(set[1])
-        if new_length >= original:
-            swap_edge_set_ends(set)
-
-    # reformat to origninal data structure
-    reformat = []
-    edge = edges.pop()
-    reformat.append(edge[0])
-    reformat.append(edge[1])
-    print("re", reformat)
-    for _ in range(len(edges)-1):
-        last_vertex = reformat[len(reformat) - 1]
-        print(last_vertex)
-        for i in range(len(edges) - 1):
-            if edges[i][0] == last_vertex:
-                vertex = edges.pop(i)
-                reformat.append(vertex[0])
-            if edges[i][1] == last_vertex:
-                vertex = edges.pop(i)
-                reformat.append(vertex[1])
-    return reformat
-
-
-def random_improvements_2(tour):
-    for i in range(len(tour)):
-        for j in range(i+1, len(tour)-1):
-            locations = [i, j]
-            original = distance(tour[locations[0]], tour[locations[0]+1]) + distance(tour[locations[1]], tour[locations[1]+1])
-            new_length = distance(tour[locations[0]], tour[locations[1]+1]) + distance(tour[locations[1]], tour[locations[0]+1])
-            if new_length < original:
-                tour = switch_edges(tour, locations[0]+1, locations[1])
+        new_tour = cycle(tour)
+        if new_tour == tour:
+            return new_tour
+        else:
+            tour = new_tour
     return tour
 
 
-def swap_edge_set_ends(set):
-    set[0][1], set[1][1] = set[1][1], set[0][1]
+def test_proposal(tour, index_1, index_2):
+    start1 = tour[index_1]
+    end1 = tour[index_1 + 1]
+    start2 = tour[index_2]
+    end2 = tour[index_2 + 1] if index_2 + 1 < len(tour) else tour[0]
+    first_case = distance(start1, end1) + distance(start2, end2)
+    second_case = distance(start1, start2) + distance(end1, end2)
+    if second_case < first_case:
+        return True
+    else:
+        return False
+
+
+def cycle(tour):
+    for i in range(len(tour)):
+        for j in range(i + 1, len(tour)):
+            if test_proposal(tour, i, j):
+                new = switch_edges(tour, i+1, j)
+                return new
+    return tour
 
 
 # plot_tsp(try_all_tours, make_cities(10))
-plot_tsp(nn_algorithm, make_cities(10, 0))
-# plot_tsp(nn_no_intersection_algorithm, make_cities(500, 0))
-plot_tsp(random_algorithm, make_cities(10, 0))
+plot_tsp(nn_algorithm, make_cities(500, 0))
+# plot_tsp(nn_no_intersection_algorithm, make_cities(100, 0))
+plot_tsp(two_opt, make_cities(500, 0))
