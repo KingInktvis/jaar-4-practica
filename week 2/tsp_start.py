@@ -294,17 +294,11 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(switch_edges(tour, 1, 3), check)
 
 
-# if __name__ == '__main__':
-#     unittest.main()
-
-
 def city_intersection_correlation():
     for i in range(1, 100):
         tour = nn_algorithm(make_cities(i, 0))
         print(count_intersections(tour))
 
-
-# city_intersection_correlation()
 
 def edge_length(edge):
     distance = (edge[0].x - edge[1].x) ** 2 + (edge[0].y - edge[1].y) ** 2
@@ -316,7 +310,7 @@ def two_opt(cities):
     # for c in cities:
     #     tour.append(c)
     tour = nn_algorithm(cities)
-    for _ in range(1000):
+    for i in range(300):
         new_tour = cycle(tour)
         if new_tour == tour:
             return new_tour
@@ -342,7 +336,7 @@ def cycle(tour):
     for i in range(len(tour)):
         for j in range(i + 1, len(tour)):
             if test_proposal(tour, i, j):
-                new = switch_edges(tour, i+1, j)
+                new = switch_edges(tour, i + 1, j)
                 return new
     return tour
 
@@ -351,3 +345,7 @@ def cycle(tour):
 plot_tsp(nn_algorithm, make_cities(500, 0))
 # plot_tsp(nn_no_intersection_algorithm, make_cities(100, 0))
 plot_tsp(two_opt, make_cities(500, 0))
+# city_intersection_correlation()
+
+# if __name__ == '__main__':
+#     unittest.main()
