@@ -1,0 +1,14 @@
+a)
+    1.13998338476
+    1.12334746031
+    1.03037992528
+    1.04159510352
+b)
+    lengte: 20430.0
+    tijd: 0.122 secs
+c)
+
+e)
+    2-opt doet iteraties over de dataset n. Voor elke n word weer alle volgende edges uitgerekend wat gemiddeld 1/2 n is.
+    Deze iteratie cyclus wordt gedaan tot er een lokaal maxima is bereikt. Hoelang dit duurt zal afhangen van de a n.
+    Dit geeft een tijdcomplexiteit van O = 1/2 a n^3
