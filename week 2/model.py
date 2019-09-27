@@ -164,11 +164,10 @@ def get_random_move():
     return random.choice(list(MERGE_FUNCTIONS.keys()))
 
 
+# Compare two boards to see if they are the same
 def compare_boards(existing_board, board_to_compare):
     for x in range(0, 16):
-        if existing_board[int(x / 4)][x % 4] == board_to_compare[int(x / 4)][x % 4]:
-            continue
-        else:
+        if existing_board[int(x / 4)][x % 4] != board_to_compare[int(x / 4)][x % 4]:
             return False
     return True
 
@@ -190,6 +189,7 @@ def get_expectimax_move(board, depth, make_move=False, initial_move=False):
             # copy the board, and play the move out
             new_board = board.copy()
             new_board = MERGE_FUNCTIONS[move_direction](new_board)
+            # check if the move was actually valid, and the board is not the same. If not, skip the current loop
             if compare_boards(new_board, board):
                 continue
             # look for the next tiles and moves recursively
@@ -224,6 +224,7 @@ def get_expectimax_move(board, depth, make_move=False, initial_move=False):
         return (1, score_calculation)
 
 
+# a heuristic board value
 heuristic_board = [6, 5, 4, 3,
                    5, 4, 3, 2,
                    4, 3, 2, 1,
@@ -240,7 +241,7 @@ def heuristic(board):
     # keep track of the score and highest found tile
     score = 0
     highest_tile = 0
-    #go by each tile on the board
+    # go by each tile on the board
     for x in range(0, 16):
         board_tile = board[int(x / 4)][x % 4]
         # keep track of highest found tile

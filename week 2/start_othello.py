@@ -56,6 +56,7 @@ HEURISTIC_BOARD = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                    0, 1, 5, 3, 3, 3, 3, 5, 1, 0,
                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
+
 def squares():
     # list all the valid squares on the board.
     # returns a list [11, 12, 13, 14, 15, 16, 17, 18, 21, ...]; e.g. 19,20,21 are invalid
@@ -86,15 +87,18 @@ def print_board(board):
         rep += '%d %s\n' % (row, ' '.join(board[begin:end]))
     return rep
 
+
+# gets a count of the white tiles and black tiles on a board
 def get_white_black_count(board):
     white_count = 0
     black_count = 0
-    for x in board:
-        if x == WHITE:
+    for pawn in board:
+        if pawn == WHITE:
             white_count += 1
-        elif x is not EMPTY and x is not OUTER:
+        elif pawn is not EMPTY and pawn is not OUTER:
             black_count += 1
     return white_count, black_count
+
 
 # -----------------------------------------------------------------------------
 # Playing the game
@@ -198,7 +202,7 @@ def any_legal_move(player, board):
 
 def play(black_strategy, white_strategy):
     # get a starting player and initialise the board
-    player = WHITE if random.randint(0,1) is 0 else BLACK
+    player = WHITE if random.randint(0, 1) is 0 else BLACK
     board = initial_board()
     # as long as we have a player who currently can move, play the game
     while player:
@@ -215,13 +219,15 @@ def play(black_strategy, white_strategy):
         board = make_move(next_move, player, board)
         # swap players
         player = opponent(player)
-        #print the board to show the updated board
+        # print the board to show the updated board
         print(print_board(board))
+    # The game ended, lets print out the scores and final board
     print("Game Concluded!")
     white_black_count = get_white_black_count(board)
     print("WHITE (" + WHITE + "): ", white_black_count[0], " vs. ", white_black_count[1], " BLACK (" + BLACK + ")")
     print(print_board(board))
     # play a game of Othello and return the final board and score
+
 
 # find the next player
 def next_player(board, prev_player):
@@ -240,70 +246,77 @@ def next_player(board, prev_player):
 def get_move(strategy, player, board):
     return strategy(player, board)
 
+
 # Heuristic to count tiles on the board
 def score_count_tiles(player, board):
-    playerScore = 0
-    opponentScore = 0
-    #for each board space, check if its ours or our opponents, and add 1 to their score
+    player_score = 0
+    opponent_score = 0
+    # for each board space, check if its ours or our opponents, and add 1 to their score
     for pawn in board:
         if pawn == opponent(player):
-            opponentScore += 1
+            opponent_score += 1
         elif pawn is not EMPTY and pawn is not OUTER:
-            playerScore += 1
+            player_score += 1
     # subtract the two scores
-    return playerScore - opponentScore
+    return player_score - opponent_score
     # compute player's score (number of player's pieces minus opponent's)
 
-#Heuristic position count scores
+
+# Heuristic position count scores
 def score_heuristic_count(player, board):
     playerScore = 0
     opponentScore = 0
     index = 0
-    #similar to the previous get score function, but this one takes a weighted value from our heuristic board
+    # similar to the previous get score function, but this one takes a weighted value from our heuristic board
     for pawn in board:
-        if pawn==opponent(player):
+        if pawn == opponent(player):
             opponentScore += HEURISTIC_BOARD[index]
         elif pawn is not EMPTY and pawn is not OUTER:
             playerScore += HEURISTIC_BOARD[index]
-        index+=1
-    return playerScore-opponentScore
+        index += 1
+    return playerScore - opponentScore
+
 
 # Play strategies
 def strategy_random(player, board):
     if any_legal_move(player, board):
         possible_moves = legal_moves(player, board)
-        return possible_moves[random.randint(0, len(possible_moves)-1)]
+        return possible_moves[random.randint(0, len(possible_moves) - 1)]
+
 
 def strategy_negamax(player, board):
     return negamax(player, board, 3, 1)
 
+
 def strategy_negamax_pruning(player, board):
     return negamax_pruning(player, board, 3, 1)
 
-#Negamax implementation
+
+# Negamax implementation
 def negamax(player, board, depth, color):
-    #if we reached the end, or no legal moves exist anymore, return the current heuristic count
+    # if we reached the end, or no legal moves exist anymore, return the current heuristic count
     if depth == 0 or not any_legal_move(player, board):
-        return color*score_heuristic_count(player, board)
-    #keep track of best score and move
+        return color * score_heuristic_count(player, board)
+    # keep track of best score and move
     best_score = -99999999
     best_move = None
     board_copy = board.copy()
     # for any legal move, check its score, and if its better than the current score, keep track of it
     for next_move in legal_moves(player, board_copy):
         new_board = make_move(next_move, player, board_copy)
-        new_score = max(best_score, -negamax(opponent(player), new_board, depth-1, -color))
+        new_score = max(best_score, -negamax(opponent(player), new_board, depth - 1, -color))
         if new_score > best_score or best_move is None:
             best_score = new_score
             best_move = next_move
     return best_move
 
-#similar to negamax, but this implements pruning
+
+# similar to negamax, but this implements pruning
 def negamax_pruning(player, board, depth, color, best_branch=float("-inf")):
-    #if we reached the end, or no legal moves exist anymore, return the current heuristic count
+    # if we reached the end, or no legal moves exist anymore, return the current heuristic count
     if depth == 0 or not any_legal_move(player, board):
-        return color*score_heuristic_count(player, board)
-    #keep track of best score and move
+        return color * score_heuristic_count(player, board)
+    # keep track of best score and move
     best_score = -99999999
     best_move = None
     board_copy = board.copy()
@@ -316,7 +329,7 @@ def negamax_pruning(player, board, depth, color, best_branch=float("-inf")):
             return best_move
         # find the maximum of the -new_score and the best_score
         new_score = max(-new_score, best_score)
-        #if our new score is worse than our best branch, simply return None to let know the branch is terminated
+        # if our new score is worse than our best branch, simply return None to let know the branch is terminated
         if best_branch > new_score:
             return None
         # if we found a better move than our previous best, track it
