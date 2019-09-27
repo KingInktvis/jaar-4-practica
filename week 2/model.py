@@ -235,7 +235,7 @@ heuristic_board = [6, 5, 4, 3,
 def heuristic(board):
     # if its game over, return the lowest possible value
     if not move_exists(board):
-        return float("-inf")
+        return -float("inf")
 
     # keep track of the score and highest found tile
     score = 0
