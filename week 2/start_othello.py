@@ -211,8 +211,11 @@ def play(black_strategy, white_strategy):
         if not next_move:
             player = next_player(board, player)
             continue
+        # update the board by making the move for the player
         board = make_move(next_move, player, board)
+        # swap players
         player = opponent(player)
+        #print the board to show the updated board
         print(print_board(board))
     print("Game Concluded!")
     white_black_count = get_white_black_count(board)
@@ -220,37 +223,43 @@ def play(black_strategy, white_strategy):
     print(print_board(board))
     # play a game of Othello and return the final board and score
 
-
+# find the next player
 def next_player(board, prev_player):
+    # by default, the opponent is at turn now
     other_player = opponent(prev_player)
+    # if the opponent can do any legal move, return him
     if any_legal_move(other_player, board):
         return other_player
+    # if he cant, but the previous player can, return him instead
     elif any_legal_move(prev_player, board):
         return prev_player
+    # nobody can do any move at this point
     return None
-    # which player should move next?  Returns None if no legal moves exist
 
 
 def get_move(strategy, player, board):
     return strategy(player, board)
-    # call strategy(player, board) to get a move
 
-
+# Heuristic to count tiles on the board
 def score_count_tiles(player, board):
     playerScore = 0
     opponentScore = 0
+    #for each board space, check if its ours or our opponents, and add 1 to their score
     for pawn in board:
         if pawn == opponent(player):
             opponentScore += 1
         elif pawn is not EMPTY and pawn is not OUTER:
             playerScore += 1
+    # subtract the two scores
     return playerScore - opponentScore
     # compute player's score (number of player's pieces minus opponent's)
 
+#Heuristic position count scores
 def score_heuristic_count(player, board):
     playerScore = 0
     opponentScore = 0
     index = 0
+    #similar to the previous get score function, but this one takes a weighted value from our heuristic board
     for pawn in board:
         if pawn==opponent(player):
             opponentScore += HEURISTIC_BOARD[index]
@@ -271,12 +280,16 @@ def strategy_negamax(player, board):
 def strategy_negamax_pruning(player, board):
     return negamax_pruning(player, board, 3, 1)
 
+#Negamax implementation
 def negamax(player, board, depth, color):
+    #if we reached the end, or no legal moves exist anymore, return the current heuristic count
     if depth == 0 or not any_legal_move(player, board):
         return color*score_heuristic_count(player, board)
+    #keep track of best score and move
     best_score = -99999999
     best_move = None
     board_copy = board.copy()
+    # for any legal move, check its score, and if its better than the current score, keep track of it
     for next_move in legal_moves(player, board_copy):
         new_board = make_move(next_move, player, board_copy)
         new_score = max(best_score, -negamax(opponent(player), new_board, depth-1, -color))
@@ -285,20 +298,28 @@ def negamax(player, board, depth, color):
             best_move = next_move
     return best_move
 
+#similar to negamax, but this implements pruning
 def negamax_pruning(player, board, depth, color, best_branch=float("-inf")):
+    #if we reached the end, or no legal moves exist anymore, return the current heuristic count
     if depth == 0 or not any_legal_move(player, board):
         return color*score_heuristic_count(player, board)
+    #keep track of best score and move
     best_score = -99999999
     best_move = None
     board_copy = board.copy()
+    # for any legal move, check its score, and if its better than the current score, keep track of it
     for next_move in legal_moves(player, board_copy):
         new_board = make_move(next_move, player, board_copy)
         new_score = negamax_pruning(opponent(player), new_board, depth - 1, -color, best_score)
+        # if the tree got terminated due to a better branch count, simply return the current best move
         if new_score is None:
             return best_move
+        # find the maximum of the -new_score and the best_score
         new_score = max(-new_score, best_score)
+        #if our new score is worse than our best branch, simply return None to let know the branch is terminated
         if best_branch > new_score:
             return None
+        # if we found a better move than our previous best, track it
         if new_score > best_score or best_move is None:
             best_score = new_score
             best_move = next_move
