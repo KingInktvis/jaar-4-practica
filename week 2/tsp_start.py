@@ -3,7 +3,6 @@ import random
 import time
 import itertools
 import math
-import unittest
 from collections import namedtuple
 
 # based on Peter Norvig's IPython Notebook on the TSP
@@ -36,7 +35,7 @@ def tour_length(tour):
                for i in range(len(tour)))
 
 
-def make_cities(n, seed=0, width=1000, height=1000):
+def make_cities(n, seed=1, width=1000, height=1000):
     # make a set of n cities, each with random coordinates within a rectangle (width x height).
 
     random.seed(seed)  # the current system time is used as a seed
@@ -55,6 +54,8 @@ def plot_tour(tour):
     plt.show()
 
 
+# Create a tour by taking a city as start point and adding the closed city as next point in the tour
+# repeat this until all cities are added
 def nearest_neighbour_algorithm(cities):
     to_go = set(cities)
     start = to_go.pop()
@@ -66,6 +67,7 @@ def nearest_neighbour_algorithm(cities):
     return path
 
 
+# return the city from the give options which is closed to the given current city
 def find_nearest_neighbour(current_city, city_options):
     best = None
     euclidean_distance = 9999999
@@ -77,6 +79,8 @@ def find_nearest_neighbour(current_city, city_options):
     return best
 
 
+# switch the edges in the given path.
+# both indexes are the location of first vertex of both edges
 def switch_edges(path, vertex_index_1, vertex_index_2):
     start = path[:vertex_index_1] if vertex_index_1 > 0 else []
     end = path[vertex_index_2 + 1:]
@@ -84,6 +88,7 @@ def switch_edges(path, vertex_index_1, vertex_index_2):
     mid.reverse()
     new_path = start + mid + end
     return new_path
+
 
 def plot_tsp(algorithm, cities):
     # apply a TSP algorithm to cities, print the time it took, and plot the resulting tour.
@@ -97,7 +102,10 @@ def plot_tsp(algorithm, cities):
     print("Start plotting ...")
     plot_tour(tour)
 
+
+# find the fastest path using 2-opt for optimization
 def two_opt(cities):
+    # using nearest neighbour as start point to improve execution time
     tour = nearest_neighbour_algorithm(cities)
     for i in range(300):
         new_tour = improve_tour(tour)
@@ -108,6 +116,7 @@ def two_opt(cities):
     return tour
 
 
+# Take a proposed switch and return true if it makes the path shorter and false if not
 def test_proposal(tour, index_1, index_2):
     start1 = tour[index_1]
     end1 = tour[index_1 + 1]
@@ -121,17 +130,16 @@ def test_proposal(tour, index_1, index_2):
         return False
 
 
+# Try to switch every edges with one another and keep the change if it reduces the path length
+# returns the resulting tour path
 def improve_tour(tour):
     for i in range(len(tour)):
         for j in range(i + 1, len(tour)):
             if test_proposal(tour, i, j):
-                new_tour_path = switch_edges(tour, i + 1, j)
-                return new_tour_path
+                tour = switch_edges(tour, i + 1, j)
     return tour
 
 
 # plot_tsp(try_all_tours, make_cities(10))
-plot_tsp(nearest_neighbour_algorithm, make_cities(500, 0))
-# plot_tsp(nn_no_intersection_algorithm, make_cities(100, 0))
-plot_tsp(two_opt, make_cities(500, 0))
-# city_intersection_correlation()
+plot_tsp(nearest_neighbour_algorithm, make_cities(500, 1))
+plot_tsp(two_opt, make_cities(500, 1))
