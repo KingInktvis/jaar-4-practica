@@ -84,14 +84,6 @@ def could_be_neighbours(board, card1, card2):
     return True
 
 
-# def are_neighbours(board, card1, card2):
-#     card_positions = find_cards(board, card1)
-#     for p in card_positions:
-#         neighbours = get_neighbours(p, board)
-#         if card2 in neighbours:
-#             return False
-#     return True
-
 def are_not_neighbours(board, card1, card2):
     card_positions = find_cards(board, card1)
     for p in card_positions:
@@ -102,7 +94,7 @@ def are_not_neighbours(board, card1, card2):
 
 
 def dfs_entry():
-    board = [None, None, None, None, None, None, None]
+    board = [None, None, None, None, None, None, None, None]
     choices = list(base)
     print(dfs(board, 0, choices))
 
@@ -121,7 +113,7 @@ def dfs(board, next, choices):
             result = dfs(board, next + 1, remaining_cards)
             if result is not None:
                 return result
-            board[next] = None
+        board[next] = None
 
 
 def print_board_list(boards):
