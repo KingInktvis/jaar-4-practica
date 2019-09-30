@@ -95,8 +95,13 @@ def are_not_neighbours(board, card1, card2):
 
 def dfs_entry():
     board = [None, None, None, None, None, None, None, None]
-    choices = list(base)
-    print(dfs(board, 0, choices))
+    choices = {
+        Card.Ace: 2,
+        Card.King: 2,
+        Card.Queen: 2,
+        Card.Jack: 2
+    }
+    print_board(dfs(board, 0, choices))
 
 
 def dfs(board, next, choices):
@@ -106,11 +111,13 @@ def dfs(board, next, choices):
         else:
             return None
     for c in choices:
+        if choices[c] == 0:
+            continue
         board[next] = c
         if check_rules(board):
-            remaining_cards = choices[:]
-            remaining_cards.remove(c)
-            result = dfs(board, next + 1, remaining_cards)
+            choices[c] -= 1
+            result = dfs(board, next + 1, choices)
+            choices[c] += 1
             if result is not None:
                 return result
         board[next] = None
@@ -134,13 +141,10 @@ base = (Card.Ace, Card.Ace, Card.King, Card.King, Card.Queen, Card.Queen, Card.J
 
 def brute_force():
     perm = itertools.permutations(base)
-    no_dups = []
-    for p in perm:
-        if p not in no_dups:
-            no_dups.append(p)
-    solutions = list(filter(check_rules, no_dups))
+    no_duplicates = set(perm)
+    solutions = list(filter(check_rules, no_duplicates))
     print_board_list(solutions)
 
 
-# brute_force()
-dfs_entry()
+brute_force()
+# dfs_entry()
