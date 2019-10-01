@@ -101,15 +101,17 @@ def dfs_entry():
         Card.Queen: 2,
         Card.Jack: 2
     }
-    print_board(dfs(board, 0, choices))
+    for b in dfs(board, 0, choices):
+        print_board(b)
 
 
 def dfs(board, next, choices):
+    solutions = []
     if next == 8:
         if check_rules(board):
-            return tuple(board)
+            return [tuple(board)]
         else:
-            return None
+            return []
     for c in choices:
         if choices[c] == 0:
             continue
@@ -118,9 +120,10 @@ def dfs(board, next, choices):
             choices[c] -= 1
             result = dfs(board, next + 1, choices)
             choices[c] += 1
-            if result is not None:
-                return result
+            if not len(result) == 0:
+                solutions = solutions + result
         board[next] = None
+    return solutions
 
 
 def print_board_list(boards):
@@ -146,5 +149,5 @@ def brute_force():
     print_board_list(solutions)
 
 
-brute_force()
-# dfs_entry()
+# brute_force()
+dfs_entry()
