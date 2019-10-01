@@ -2,6 +2,7 @@ from enum import Enum
 import itertools
 
 
+# Enum representing the different cards
 class Card(Enum):
     Ace = 'A'
     King = 'K'
@@ -9,6 +10,7 @@ class Card(Enum):
     Jack = 'J'
 
 
+# Return a list with all neighbouring cards(horizontal & vertical) for the given position on the given board
 def get_neighbours(current_position, board):
     fields = []
     if current_position == 0:
@@ -33,6 +35,7 @@ def get_neighbours(current_position, board):
     return cards
 
 
+# returns a list with indexes of the positions of the given card on the board
 def find_cards(board, card):
     positions = []
     for i in range(len(board)):
@@ -41,22 +44,27 @@ def find_cards(board, card):
     return positions
 
 
+# Every ace is next to a king
 def rule_1(board):
     return could_be_neighbours(board, Card.Ace, Card.King)
 
 
+# Every king is next to a queen
 def rule_2(board):
     return could_be_neighbours(board, Card.King, Card.Queen)
 
 
+# Every queen is next to a Jack
 def rule_3(board):
     return could_be_neighbours(board, Card.Queen, Card.Jack)
 
 
+# Every ace is not next to a queen
 def rule_4(board):
     return are_not_neighbours(board, Card.Ace, Card.Queen)
 
 
+# 2 of the same cards are not next to each other
 def rule_5(board):
     for c in Card:
         if not are_not_neighbours(board, c, c):
@@ -67,6 +75,7 @@ def rule_5(board):
 rules = (rule_1, rule_2, rule_3, rule_4, rule_5)
 
 
+# Check is all constraints are satisfied for the given board
 def check_rules(board):
     for rule in rules:
         if not rule(board):
@@ -74,6 +83,7 @@ def check_rules(board):
     return True
 
 
+# Check if card1 is or could be next to card2
 def could_be_neighbours(board, card1, card2):
     card_positions = find_cards(board, card1)
     for p in card_positions:
@@ -84,6 +94,7 @@ def could_be_neighbours(board, card1, card2):
     return True
 
 
+# Check if the two cards are not next to each other
 def are_not_neighbours(board, card1, card2):
     card_positions = find_cards(board, card1)
     for p in card_positions:
@@ -93,6 +104,7 @@ def are_not_neighbours(board, card1, card2):
     return True
 
 
+# Start a DFS search for all solutions
 def dfs_entry():
     board = [None, None, None, None, None, None, None, None]
     choices = {
@@ -105,6 +117,7 @@ def dfs_entry():
         print_board(b)
 
 
+# Recursive function to find all solutions
 def dfs(board, next, choices):
     solutions = []
     if next == 8:
@@ -142,6 +155,7 @@ def print_board(board):
 base = (Card.Ace, Card.Ace, Card.King, Card.King, Card.Queen, Card.Queen, Card.Jack, Card.Jack)
 
 
+# Solve the problem by calculating all permutations and checking them
 def brute_force():
     perm = itertools.permutations(base)
     no_duplicates = set(perm)
