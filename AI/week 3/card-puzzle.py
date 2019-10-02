@@ -118,9 +118,9 @@ def dfs_entry():
 
 
 # Recursive function to find all solutions
-def dfs(board, next, choices):
+def dfs(board, current_position, choices):
     solutions = []
-    if next == 8:
+    if current_position == 8:
         if check_rules(board):
             return [tuple(board)]
         else:
@@ -128,14 +128,14 @@ def dfs(board, next, choices):
     for c in choices:
         if choices[c] == 0:
             continue
-        board[next] = c
+        board[current_position] = c
         if check_rules(board):
             choices[c] -= 1
-            result = dfs(board, next + 1, choices)
+            result = dfs(board, current_position + 1, choices)
             choices[c] += 1
             if not len(result) == 0:
                 solutions = solutions + result
-        board[next] = None
+        board[current_position] = None
     return solutions
 
 

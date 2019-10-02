@@ -163,7 +163,7 @@ def check_for_no_conflicts(grid):
 
 # Solves a sudoku using DFS and elimination
 def solve(grid):
-    while assign_and_eliminate_values(grid) == 1:
+    while assign_and_eliminate_values(grid):
         pass
     return dfs(grid)
 

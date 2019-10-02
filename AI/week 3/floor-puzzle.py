@@ -41,10 +41,7 @@ def joep_rule(order):
     joep = order.index(Inhabitants.Joep)
     niels = order.index(Inhabitants.Niels)
     diff = joep - niels
-    if diff == 1 or diff == -1:
-        return False
-    else:
-        return True
+    return not (diff == 1 or diff == -1)
 
 
 # Niels does not live directly above or below Marja
@@ -52,10 +49,7 @@ def niels_marja_rule(order):
     niels = order.index(Inhabitants.Niels)
     marja = order.index(Inhabitants.Marja)
     diff = niels - marja
-    if diff == 1 or diff == -1:
-        return False
-    else:
-        return True
+    return not (diff == 1 or diff == -1)
 
 
 people = (Inhabitants.Loes, Inhabitants.Marja, Inhabitants.Niels, Inhabitants.Erik, Inhabitants.Joep)
