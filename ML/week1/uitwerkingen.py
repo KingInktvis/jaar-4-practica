@@ -80,11 +80,22 @@ def gradientDescent(X, y, theta, alpha, num_iters):
     m, n = X.shape
 
     # YOUR CODE HERE
+    theta = theta.T
+    for _ in range(num_iters):
+        prediction = X.dot(theta)
+        diff = prediction - y
+        multiple_input = diff * X
+        ones = np.ones((m, 1))
+        sum = multiple_input.T.dot(ones)
+        correction = alpha / m * sum
+        new = theta - correction
+        theta = new
+
 
     # aan het eind van deze loop retourneren we de nieuwe waarde van theta
     # (wat is de dimensionaliteit van theta op dit moment?).
 
-    return theta
+    return theta.T
 
 
 def contourPlot(X, y):
