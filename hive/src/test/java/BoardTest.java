@@ -36,5 +36,13 @@ public class BoardTest {
         assertTrue(HiveBoard.getInstance().getTile(0, 0).getTileType() == Hive.Tile.SPIDER);
         assertTrue(HiveBoard.getInstance().getTile(0, 1).getColor() == Hive.Player.BLACK);
         assertTrue(HiveBoard.getInstance().getTile(0, 1).getTileType() == Hive.Tile.QUEEN_BEE);
+
+        try {
+            game.play(Hive.Tile.QUEEN_BEE, 0, 2);
+            assertTrue(false);
+        } catch (Hive.IllegalMove illegalMove) {
+            //its intended to fail.
+            assertTrue(true);
+        }
     }
 }
