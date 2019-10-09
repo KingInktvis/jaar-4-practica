@@ -7,12 +7,13 @@ import nl.hanze.hive.Hive;
  */
 public class BoardTile {
 
-    private int xCoord, yCoord;
+    private int xCoord, yCoord, zCoord;
     private Hive.Tile tileType;
 
     public BoardTile(int xCoord, int yCoord, Hive.Tile tileType){
         this.xCoord = xCoord;
         this.yCoord = yCoord;
+        this.zCoord = 0;
         this.tileType = tileType;
     }
 
@@ -23,6 +24,14 @@ public class BoardTile {
     public void setCoords(int xCoord, int yCoord) {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
+    }
+
+    public void setZCoord(int zCoord){
+        this.zCoord = zCoord;
+    }
+
+    public int getzCoord(){
+        return zCoord;
     }
 
     public int getyCoord() {
