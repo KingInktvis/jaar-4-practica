@@ -50,7 +50,12 @@ def computeCost(X, y, theta):
     J = 0
 
     # YOUR CODE HERE
-
+    estimate = X.dot(theta)
+    diff = y - estimate
+    square = diff ** 2
+    points = y.shape[0]
+    sum = square.sum()
+    J = sum / (2 * points)
     return J
 
 
