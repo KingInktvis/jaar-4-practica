@@ -36,6 +36,7 @@ public class HiveGame implements Hive {
         if(player.hasAllTiles() && getPlayerFromColor(getOpponent(player.getPlayerColor())).hasAllTiles()){
             player.removeTile(tile);
             hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
+            whiteTurn = !whiteTurn;
             return;
         }
         //find the tile's neighbours. May not be empty, tiles have to connect
@@ -48,12 +49,15 @@ public class HiveGame implements Hive {
             //they dont have tiles on the board yet, so it needs to be placed against an opposite color tile (the only one on the field)
             player.removeTile(tile);
             hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
+            whiteTurn = !whiteTurn;
+            return;
         }else{
             //they already have tiles on the board
             for(BoardTile boardTile: neighbours){
                 if(boardTile.getColor()==player.getPlayerColor()){
                     player.removeTile(tile);
                     hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
+                    whiteTurn = !whiteTurn;
                     return;
                 }
             }
