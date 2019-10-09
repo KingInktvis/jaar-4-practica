@@ -9,12 +9,14 @@ public class BoardTile {
 
     private int xCoord, yCoord, zCoord;
     private Hive.Tile tileType;
+    private Hive.Player tileColor;
 
-    public BoardTile(int xCoord, int yCoord, Hive.Tile tileType){
+    public BoardTile(int xCoord, int yCoord, Hive.Tile tileType, Hive.Player tileColor){
         this.xCoord = xCoord;
         this.yCoord = yCoord;
         this.zCoord = 0;
         this.tileType = tileType;
+        this.tileColor = tileColor;
     }
 
     public int getxCoord() {
@@ -40,5 +42,9 @@ public class BoardTile {
 
     public Hive.Tile getTileType() {
         return tileType;
+    }
+
+    public Hive.Player getColor(){
+        return tileColor;
     }
 }
