@@ -21,9 +21,8 @@ def drawGraph(data):
     # Maak gebruik van pytplot.scatter om dit voor elkaar te krijgen.
 
     # YOUR CODE HERE
-    x = [i[0] for i in data]
-    y = [i[1] for i in data]
-    plt.scatter(x, y)
+    data = data.T
+    plt.scatter(data)
     plt.show()
 
 
@@ -118,7 +117,8 @@ def contourPlot(X, y):
 
     J_vals = np.zeros((len(t2), len(t2)))
 
-    # YOUR CODE HERE 
+    # YOUR CODE HERE
+
 
     surf = ax.plot_surface(T1, T2, J_vals, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 
