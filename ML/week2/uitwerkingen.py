@@ -10,6 +10,10 @@ def plotNumber(nrVector):
     # gespiegeld en geroteerd. Zie de documentatie op 
     # https://docs.scipy.org/doc/numpy/reference/generated/numpy.reshape.html
 
+    matrix = nrVector.reshape(20, 20).T
+    plt.matshow(matrix)
+    plt.show()
+
     pass
 
 # ==== OPGAVE 2a ====
