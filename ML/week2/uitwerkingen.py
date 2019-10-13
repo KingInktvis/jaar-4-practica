@@ -35,7 +35,6 @@ def get_y_matrix(y, m):
     # y_i=10, dan is regel i in de matrix [0,0,...1] (in dit geval is de breedte
     # van de matrix 10 (0-9), maar de methode moet werken voor elke waarde van 
     # y en m
-    # for i in range(len(y)):
     x = np.amax(y)
     m = y.shape[0]
     rows = [i for i in range(m)]
