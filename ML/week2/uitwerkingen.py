@@ -38,9 +38,10 @@ def get_y_matrix(y, m):
     # for i in range(len(y)):
     x = np.amax(y)
     m = y.shape[0]
-    matrix = np.zeros((y.shape[0], x))
-    for i in range(m):
-        matrix[i][y[i]-1] = 1
+    rows = [i for i in range(m)]
+    cols = [i[0]-1 for i in y]
+    data = [1 for _ in cols]
+    matrix = csr_matrix((data, (rows, cols)), shape=(m, x))
     return matrix
 
 
