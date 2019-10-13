@@ -44,7 +44,7 @@ def nnCostFunction(Thetas, X, y):
     Theta2 = Thetas[size:].reshape(num_labels, hidden_layer_size+1)
     J = computeCost(Theta1, Theta2, X, y)
     grad1, grad2 = nnCheckGradients(Theta1, Theta2, X, y)
-    return J, np.concatenate( (grad1.flatten(), grad2.flatten()) ) 
+    return J, np.concatenate( (grad1.flatten(), grad2.flatten()) )
 
 
 #Laden van de data en zetten van de variabelen.
@@ -72,7 +72,7 @@ else:
     print ("Dit zou een {} moeten zijn.".format(hyp))
     plotNumber(X[rnd,:])
 
-input ("Druk op Return om verder te gaan...") 
+# input ("Druk op Return om verder te gaan...")
 
 
 # ========================  OPGAVE 2a ======================== 
@@ -91,7 +91,7 @@ print (sigmoid(np.matrix( [-10, 0, 10] )))
 print ("Simoid aangeroepen met 3×1 vector [-10, 0, 10]")
 print (sigmoid(np.matrix( ([-10], [0], [10]) )))
 
-input ("Druk op Return om verder te gaan...") 
+input ("Druk op Return om verder te gaan...")
 
 # ========================  OPGAVE 2b ======================== 
 print ("")
@@ -103,7 +103,7 @@ print ("Dit zou (5000,10) moeten zijn.")
 input ("Druk op Return om verder te gaan.")
 
 
-# ========================  OPGAVE 2c ======================== 
+# ========================  OPGAVE 2c ========================
 print("")
 print ("Zetten van initiële waarden van de Theta's.")
 Theta1 = randInitializeWeights(input_layer_size, hidden_layer_size)
@@ -150,7 +150,7 @@ print ("Training compleet. ")
 cost = computeCost(res_Theta1, res_Theta2, X, y)
 print ("De totale kost is nu {}".format(cost))
 
-cost = computeCost(res_Theta1, res_Theta2, X, y) 
+cost = computeCost(res_Theta1, res_Theta2, X, y)
 print ("De kosten die gemoeid zijn met de huidige waarden van Theta1 en Theta2 zijn {}".format(cost))
 print ("Dit zou een stuk lager moeten zijn dan in het begin.")
 
@@ -162,4 +162,4 @@ print ("De huidige accuratessse van het netwerk is {} %".format(100 * acc/ m))
 print ("Dat zou een stuk hoger moeten zijn dan in het begin.")
 print ("Plotten van de waarden van de gewichten in de verborgen laag (hidden layer)")
 
-displayData(res_Theta1[:,1:]) 
+displayData(res_Theta1[:,1:])
