@@ -91,7 +91,7 @@ print (sigmoid(np.matrix( [-10, 0, 10] )))
 print ("Simoid aangeroepen met 3×1 vector [-10, 0, 10]")
 print (sigmoid(np.matrix( ([-10], [0], [10]) )))
 
-input ("Druk op Return om verder te gaan...")
+# input ("Druk op Return om verder te gaan...")
 
 # ========================  OPGAVE 2b ======================== 
 print ("")
