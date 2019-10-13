@@ -56,7 +56,7 @@ theta = np.zeros((1, 2))
 theta = gradientDescent(X, y, theta, alpha, num_iters)
 print("De gevonden waarde voor theta={}".format(theta))
 print("Deze waarde zou rond de (-3.63, 1.16) moeten liggen.")
-input("Druk op return om verder te gaan...")
+# input("Druk op return om verder te gaan...")
 
 # ========================  OPGAVE 4 ========================
 print("\nOpgave 4: contour plot")

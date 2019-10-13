@@ -22,7 +22,7 @@ def drawGraph(data):
 
     # YOUR CODE HERE
     data = data.T
-    plt.scatter(data)
+    plt.scatter(data[0], data[1])
     plt.show()
 
 
@@ -118,7 +118,11 @@ def contourPlot(X, y):
     J_vals = np.zeros((len(t2), len(t2)))
 
     # YOUR CODE HERE
-
+    for i in range(J_vals.shape[0]):
+        for j in range(J_vals.shape[1]):
+            tmp = np.array([[t1[i]], [t2[j]]])
+            cost = computeCost(X, y, tmp)
+            J_vals[i][j] = cost
 
     surf = ax.plot_surface(T1, T2, J_vals, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 
