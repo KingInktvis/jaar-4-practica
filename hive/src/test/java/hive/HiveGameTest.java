@@ -50,6 +50,5 @@ class HiveGameTest {
     void isDraw() {
         var game = new HiveGame();
         assertFalse(game.isDraw());
-        assertFalse(game.isDraw());
     }
 }
