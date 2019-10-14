@@ -52,27 +52,30 @@ public class HiveGame implements Hive {
             hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
             whiteTurn = !whiteTurn;
             return;
-        }else{
-            //they already have tiles on the board
-            boolean foundOwnColorTile = false;
-            for(BoardTile boardTile: neighbours){
-                if(boardTile.getColor()==opponent.getPlayerColor()){
-                    throw new IllegalMove("Tile connects to your opponent!");
-                }
-                if(boardTile.getColor()==player.getPlayerColor()){
-                   foundOwnColorTile = true;
-                }
-            }
-            if(!foundOwnColorTile){
-                //we have to connect to our own color, so this move isnt valid.
-                throw new IllegalMove("Tile does not connect to your color!");
-            }
-            //we found a tile to connect to, AND no tiles from the opponent as neighbours
-            player.removeTile(tile);
-            hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
-            whiteTurn = !whiteTurn;
-            return;
         }
+        //they already have tiles on the board
+        boolean foundOwnColorTile = false;
+        for(BoardTile boardTile: neighbours){
+            if(boardTile.getColor()==opponent.getPlayerColor()){
+                throw new IllegalMove("Tile connects to your opponent!");
+            }
+            if(boardTile.getColor()==player.getPlayerColor()){
+               foundOwnColorTile = true;
+            }
+        }
+        if(!foundOwnColorTile){
+            //we have to connect to our own color, so this move isnt valid.
+            throw new IllegalMove("Tile does not connect to your color!");
+        }
+        //check if the player already has 3 tiles on the board, and if the queen bee is placed
+        if(player.getTilesInPlay()==3&&player.hasTile(Tile.QUEEN_BEE)&&tile!=Tile.QUEEN_BEE){
+            throw new IllegalMove("On the fourth move, your queen bee must be placed!");
+        }
+        //we found a tile to connect to, AND no tiles from the opponent as neighbours
+        player.removeTile(tile);
+        hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
+        whiteTurn = !whiteTurn;
+        return;
     }
 
     @Override

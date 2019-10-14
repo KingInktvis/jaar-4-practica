@@ -11,7 +11,7 @@ public class HivePlayer {
 
     private Hive.Player playerColor;
     private HashMap<Hive.Tile, Integer> availableTiles = new HashMap<>();
-    private boolean hasAllTiles;
+    private int tilesInPlay;
 
     public HivePlayer(Hive.Player color){
         playerColor = color;
@@ -24,7 +24,7 @@ public class HivePlayer {
         availableTiles.put(Hive.Tile.SPIDER, 2);
         availableTiles.put(Hive.Tile.SOLDIER_ANT, 3);
         availableTiles.put(Hive.Tile.GRASSHOPPER, 3);
-        hasAllTiles=true;
+        tilesInPlay=0;
     }
 
     public boolean hasTile(Hive.Tile tile){
@@ -36,12 +36,16 @@ public class HivePlayer {
             return false;
         }
         availableTiles.put(tile, availableTiles.get(tile)-1);
-        hasAllTiles=false;
+        tilesInPlay++;
         return true;
     }
 
     public boolean hasAllTiles(){
-        return this.hasAllTiles;
+        return this.tilesInPlay==0;
+    }
+
+    public int getTilesInPlay(){
+        return tilesInPlay;
     }
 
     public Hive.Player getPlayerColor(){
