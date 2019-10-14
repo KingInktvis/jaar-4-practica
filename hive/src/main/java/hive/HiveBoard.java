@@ -3,7 +3,6 @@ package hive;
 import nl.hanze.hive.Hive;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -25,17 +24,18 @@ public class HiveBoard {
         return instance;
     }
 
-    public BoardTile getTile(int xCoord, int yCoord, Hive.Tile type){
+    public ArrayList<BoardTile> getTiles(int xCoord, int yCoord, Hive.Tile type){
+        ArrayList<BoardTile> tiles = new ArrayList<>();
         for(BoardTile tile: boardTiles){
             if(tile.getxCoord()==xCoord && tile.getyCoord()==yCoord && (type==null||type==tile.getTileType())){
-                return tile;
+                tiles.add(tile);
             }
         }
-        return null;
+        return tiles.isEmpty() ? null : tiles;
     }
 
-    public BoardTile getTile(int x, int y){
-        return getTile(x, y, null);
+    public ArrayList<BoardTile> getTile(int x, int y){
+        return getTiles(x, y, null);
     }
 
     public void placeTile(BoardTile tile){
@@ -44,30 +44,34 @@ public class HiveBoard {
 
     public List<BoardTile> getNeighbours(int x, int y){
         ArrayList<BoardTile> list = new ArrayList<>();
-        BoardTile t = getTile(x, y+1);
+        ArrayList<BoardTile> t = getTile(x, y+1);
         if(t!=null){
-            list.add(t);
+            list.addAll(t);
         }
         t = getTile(x, y-1);
         if(t!=null){
-            list.add(t);
+            list.addAll(t);
         }
         t = getTile(x-1, y);
         if(t!=null){
-            list.add(t);
+            list.addAll(t);
         }
         t = getTile(x+1, y);
         if(t!=null){
-            list.add(t);
+            list.addAll(t);
         }
         t = getTile(x-1, y-1);
         if(t!=null){
-            list.add(t);
+            list.addAll(t);
         }
         t = getTile(x+1, y+1);
         if(t!=null){
-            list.add(t);
+            list.addAll(t);
         }
         return list;
+    }
+
+    public ArrayList<BoardTile> getBoardTiles(){
+        return boardTiles;
     }
 }

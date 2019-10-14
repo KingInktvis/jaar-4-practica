@@ -32,10 +32,10 @@ public class BoardTest {
         } catch (Hive.IllegalMove illegalMove) {
             illegalMove.printStackTrace();
         }
-        assertTrue(HiveBoard.getInstance().getTile(0, 0).getColor() == Hive.Player.WHITE);
-        assertTrue(HiveBoard.getInstance().getTile(0, 0).getTileType() == Hive.Tile.SPIDER);
-        assertTrue(HiveBoard.getInstance().getTile(0, 1).getColor() == Hive.Player.BLACK);
-        assertTrue(HiveBoard.getInstance().getTile(0, 1).getTileType() == Hive.Tile.QUEEN_BEE);
+        assertTrue(HiveBoard.getInstance().getTile(0, 0).get(0).getColor() == Hive.Player.WHITE);
+        assertTrue(HiveBoard.getInstance().getTile(0, 0).get(0).getTileType() == Hive.Tile.SPIDER);
+        assertTrue(HiveBoard.getInstance().getTile(0, 1).get(0).getColor() == Hive.Player.BLACK);
+        assertTrue(HiveBoard.getInstance().getTile(0, 1).get(0).getTileType() == Hive.Tile.QUEEN_BEE);
 
         try {
             game.play(Hive.Tile.QUEEN_BEE, 0, 2);
@@ -44,5 +44,11 @@ public class BoardTest {
             //its intended to fail.
             assertTrue(true);
         }
+    }
+
+    @Test
+    void emptyBoardAtGameStart(){
+        HiveBoard board = HiveBoard.getInstance();
+        assertTrue(board.getBoardTiles().isEmpty());
     }
 }

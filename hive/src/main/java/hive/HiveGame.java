@@ -24,6 +24,7 @@ public class HiveGame implements Hive {
     public void play(Tile tile, int q, int r) throws IllegalMove {
         //get current player
         HivePlayer player = whiteTurn ? whitePlayer : blackPlayer;
+        HivePlayer opponent = whiteTurn ? blackPlayer : whitePlayer;
         //check if player HAS the tile left over
         if(!player.hasTile(tile)){
             throw new IllegalMove("Player does not have this tile in hand!");
@@ -53,16 +54,24 @@ public class HiveGame implements Hive {
             return;
         }else{
             //they already have tiles on the board
+            boolean foundOwnColorTile = false;
             for(BoardTile boardTile: neighbours){
+                if(boardTile.getColor()==opponent.getPlayerColor()){
+                    throw new IllegalMove("Tile connects to your opponent!");
+                }
                 if(boardTile.getColor()==player.getPlayerColor()){
-                    player.removeTile(tile);
-                    hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
-                    whiteTurn = !whiteTurn;
-                    return;
+                   foundOwnColorTile = true;
                 }
             }
-            //we werent able to find a tile of their color to connect to
-            throw new IllegalMove("Tile does not connect to your color!");
+            if(!foundOwnColorTile){
+                //we have to connect to our own color, so this move isnt valid.
+                throw new IllegalMove("Tile does not connect to your color!");
+            }
+            //we found a tile to connect to, AND no tiles from the opponent as neighbours
+            player.removeTile(tile);
+            hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
+            whiteTurn = !whiteTurn;
+            return;
         }
     }
 
