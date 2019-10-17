@@ -2,6 +2,7 @@ package hive;
 
 import nl.hanze.hive.Hive;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -80,17 +81,31 @@ public class HiveGame implements Hive {
 
     @Override
     public void move(int fromQ, int fromR, int toQ, int toR) throws IllegalMove {
-
+        whiteTurn = !whiteTurn;
     }
 
     @Override
     public void pass() throws IllegalMove {
-
+        whiteTurn = !whiteTurn;
     }
 
     @Override
     public boolean isWinner(Player player) {
-        return false;
+        BoardTile tile = hiveBoard.getQueenByPlayer(player);
+        if(tile==null){
+            return false;
+        }
+        List<BoardTile> neighbours = hiveBoard.getNeighbours(tile.getxCoord(), tile.getyCoord());
+        if(neighbours.size()<6){
+            return false;
+        }
+        int highest_tiles = 0;
+        for(BoardTile t: neighbours){
+            if(hiveBoard.isTopTile(t)){
+                highest_tiles++;
+            }
+        }
+        return highest_tiles==6;
     }
 
     @Override

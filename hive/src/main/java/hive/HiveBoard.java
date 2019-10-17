@@ -81,4 +81,43 @@ public class HiveBoard {
     public ArrayList<BoardTile> getBoardTiles(){
         return boardTiles;
     }
+
+    public BoardTile getQueenByPlayer(Hive.Player color){
+        for(BoardTile tile: boardTiles){
+            if(tile.getTileType()== Hive.Tile.QUEEN_BEE && tile.getColor()==color){
+                return tile;
+            }
+        }
+        return null;
+    }
+
+    public void moveTile(int x, int y, BoardTile tile) throws Hive.IllegalMove {
+        List<BoardTile> tilesAtXY = getTile(x, y);
+        if(tilesAtXY.isEmpty()){
+            tile.setCoords(x, y);
+            return;
+        }else {
+            if (tile.getTileType() == Hive.Tile.BEETLE) {
+                int highestZindex = 0;
+                for(BoardTile tileAtPosition: tilesAtXY){
+                    highestZindex = Math.max(tileAtPosition.getzCoord(), highestZindex);
+                }
+                tile.setCoords(x, y);
+                tile.setZCoord(highestZindex+1);
+            } else {
+                throw new Hive.IllegalMove("This tile is already occupied!");
+            }
+        }
+    }
+
+    public boolean isTopTile(BoardTile tile){
+        for(BoardTile t: boardTiles){
+            if(t.getxCoord()==tile.getxCoord()&&t.getyCoord()==tile.getyCoord()){
+                if(tile.getzCoord() < t.getzCoord()){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
