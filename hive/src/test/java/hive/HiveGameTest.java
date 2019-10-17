@@ -40,14 +40,14 @@ class HiveGameTest {
     }
 
     @Test
-    void isWinner() {
+    void isWinnerAtStartOfGame() {
         var game = new HiveGame();
         assertFalse(game.isWinner(Hive.Player.BLACK));
         assertFalse(game.isWinner(Hive.Player.WHITE));
     }
 
     @Test
-    void isDraw() {
+    void isDrawAtStartOfGame() {
         var game = new HiveGame();
         assertFalse(game.isDraw());
     }

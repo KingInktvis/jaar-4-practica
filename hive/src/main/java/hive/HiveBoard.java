@@ -44,27 +44,34 @@ public class HiveBoard {
 
     public List<BoardTile> getNeighbours(int x, int y){
         ArrayList<BoardTile> list = new ArrayList<>();
-        ArrayList<BoardTile> t = getTile(x, y+1);
-        if(t!=null){
-            list.addAll(t);
-        }
-        t = getTile(x, y-1);
-        if(t!=null){
-            list.addAll(t);
-        }
+        ArrayList<BoardTile> t;
+        //left
         t = getTile(x-1, y);
         if(t!=null){
             list.addAll(t);
         }
+        //right
         t = getTile(x+1, y);
         if(t!=null){
             list.addAll(t);
         }
+        //bottom right
+        t = getTile(x, y-1);
+        if(t!=null){
+            list.addAll(t);
+        }
+        //bottom left
         t = getTile(x-1, y-1);
         if(t!=null){
             list.addAll(t);
         }
+        //top right
         t = getTile(x+1, y+1);
+        if(t!=null){
+            list.addAll(t);
+        }
+        //top left
+        t = getTile(x, y+1);
         if(t!=null){
             list.addAll(t);
         }

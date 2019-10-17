@@ -28,6 +28,8 @@ public class PlayerTest {
         assertTrue(player.hasTile(Hive.Tile.SOLDIER_ANT));
         assertFalse(player.hasTile(Hive.Tile.QUEEN_BEE));
         player.removeTile(Hive.Tile.SOLDIER_ANT);
+        player.removeTile(Hive.Tile.SPIDER);
         assertFalse(player.hasTile(Hive.Tile.SOLDIER_ANT));
+        assertFalse(player.hasTile(Hive.Tile.SPIDER));
     }
 }
