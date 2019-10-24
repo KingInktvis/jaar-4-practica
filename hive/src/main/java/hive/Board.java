@@ -10,6 +10,7 @@ import java.util.Stack;
 
 public class Board {
     private HashMap<Coordinate, Stack<BoardTile>> board;
+    private int tileCount = 0;
 
     Board() {
         board = new HashMap<>();
@@ -29,6 +30,7 @@ public class Board {
         var newTile = new BoardTile(tile, player);
         var position = getBoardPosition(coordinate);
         position.push(newTile);
+        ++tileCount;
     }
 
     BoardTile getTile(Coordinate coordinate) {
@@ -72,19 +74,55 @@ public class Board {
 
     ArrayList<BoardTile> getNeighbours(Coordinate coordinate) {
         var ret = new ArrayList<BoardTile>();
-        var count = 0;
-        for (int i = -1; i <= 1; ++i) {
-            for (int j = -1; j <= 1; ++j) {
-                if (i != j) {
-                    ++count;
-                    var c = new Coordinate(coordinate.getQ() + i, coordinate.getR() + j);
-                    var tmp = getBoardPosition(c);
-                    if (!tmp.isEmpty()) {
-                        ret.add(tmp.peek());
-                    }
-                }
+        var positions = neighbouringCoordinates(coordinate);
+        for (var position : positions) {
+            var tmp = getBoardPosition(position);
+            if (!tmp.isEmpty()) {
+                ret.add(tmp.peek());
             }
         }
         return ret;
+    }
+
+    private ArrayList<Coordinate> neighbouringCoordinates(Coordinate coordinate) {
+        var positions = new ArrayList<Coordinate>();
+        for (int i = -1; i <= 1; ++i) {
+            for (int j = -1; j <= 1; ++j) {
+                if (i != j) {
+                    var c = new Coordinate(coordinate.getQ() + i, coordinate.getR() + j);
+                    positions.add(c);
+                }
+            }
+        }
+        return positions;
+    }
+
+    boolean allTilesConnected() {
+        Coordinate start = null;
+        var list = new ArrayList<BoardTile>();
+        for (var position : board.entrySet()) {
+            if (!position.getValue().isEmpty()) {
+                start = position.getKey();
+                break;
+            }
+        }
+        if (start == null) {
+            return true;
+        }
+        recursiveAddToList(list, start);
+        return list.size() == tileCount;
+    }
+
+    private void recursiveAddToList(ArrayList<BoardTile> list, Coordinate position) {
+        var tiles = getBoardPosition(position);
+        if (tiles.isEmpty()) return;
+        for (var tile : tiles) {
+            if (!list.contains(tile)) {
+                list.add(tile);
+                for (var c : neighbouringCoordinates(position)) {
+                    recursiveAddToList(list, c);
+                }
+            }
+        }
     }
 }

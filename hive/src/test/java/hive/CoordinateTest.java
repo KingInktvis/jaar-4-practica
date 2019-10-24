@@ -2,8 +2,7 @@ package hive;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CoordinateTest {
 
@@ -44,5 +43,34 @@ class CoordinateTest {
         var c1 = new Coordinate(1, 2);
         var text = "Random string";
         assertNotEquals(c1, text);
+    }
+
+    @Test
+    void testCommonNeighbours() {
+        var c1 = new Coordinate(0,0);
+        var c2 = new Coordinate(1, 0);
+        var c3 = new Coordinate(1, -1);
+        var c4 = new Coordinate(0, 1);
+        var c5 = new Coordinate(-1, 1);
+        var c6 = new Coordinate(-1, 0);
+        var c7 = new Coordinate(0, -1);
+        var res = c1.commonNeighbours(c2);
+        assertTrue(res.contains(c3));
+        assertTrue(res.contains(c4));
+        res = c1.commonNeighbours(c3);
+        assertTrue(res.contains(c2));
+        assertTrue(res.contains(c7));
+        res = c1.commonNeighbours(c4);
+        assertTrue(res.contains(c2));
+        assertTrue(res.contains(c5));
+        res = c1.commonNeighbours(c5);
+        assertTrue(res.contains(c6));
+        assertTrue(res.contains(c4));
+        res = c1.commonNeighbours(c6);
+        assertTrue(res.contains(c5));
+        assertTrue(res.contains(c7));
+        res = c1.commonNeighbours(c7);
+        assertTrue(res.contains(c6));
+        assertTrue(res.contains(c3));
     }
 }

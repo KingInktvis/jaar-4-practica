@@ -1,5 +1,6 @@
 package hive;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Coordinate {
@@ -11,12 +12,38 @@ public class Coordinate {
         this.r = r;
     }
 
-    public int getQ() {
+    int getQ() {
         return q;
     }
 
-    public int getR() {
+    int getR() {
         return r;
+    }
+
+    ArrayList<Coordinate> commonNeighbours(Coordinate coordinate) {
+        var qDiff = q - coordinate.getQ();
+        var rDiff = r - coordinate.getR();
+        var res = new ArrayList<Coordinate>();
+        if (qDiff == -1 && rDiff == 0) {
+            res.add(new Coordinate(q+1, r-1));
+            res.add(new Coordinate(q, r+1));
+        } else if (qDiff == -1 && rDiff == 1) {
+            res.add(new Coordinate(q, r-1));
+            res.add(new Coordinate(q+1, r));
+        } else if (qDiff == 0 && rDiff == -1) {
+            res.add(new Coordinate(q+1, r));
+            res.add(new Coordinate(q-1, r+1));
+        } else if (qDiff == 1 && rDiff == -1) {
+            res.add(new Coordinate(q, r+1));
+            res.add(new Coordinate(q-1, r));
+        } else if (qDiff == 1 && rDiff == 0) {
+            res.add(new Coordinate(q-1, r+1));
+            res.add(new Coordinate(q, r-1));
+        } else if (qDiff == 0 && rDiff == 1) {
+            res.add(new Coordinate(q-1, r));
+            res.add(new Coordinate(q+1, r-1));
+        }
+        return res;
     }
 
     @Override

@@ -93,6 +93,9 @@ public class HiveGame implements Hive {
         }
         var from = new Coordinate(fromQ, fromR);
         var to = new Coordinate(toQ, toR);
+        if (!Move.isValidMove(board, from, to)) {
+            throw new IllegalMove();
+        }
         board.moveTile(from, to);
         switchPlayerTurn();
     }
