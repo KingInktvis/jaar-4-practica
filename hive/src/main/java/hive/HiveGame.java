@@ -3,121 +3,123 @@ package hive;
 import nl.hanze.hive.Hive;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
-/**
- * Created by Skyerzz-LAPOTOP on 08/10/2019.
- */
 public class HiveGame implements Hive {
+    private Player turn = Player.WHITE;
+    private Board board;
+    private boolean firstTurn = true;
+    private HashMap<Tile, Integer> tileLimit = new HashMap<Tile, Integer>() {{
+        put(Tile.QUEEN_BEE, 1);
+        put(Tile.SPIDER, 2);
+        put(Tile.BEETLE, 2);
+        put(Tile.SOLDIER_ANT, 3);
+        put(Tile.GRASSHOPPER, 3);
+    }};
 
-    private HiveBoard hiveBoard;
-    private HivePlayer blackPlayer, whitePlayer;
-    private boolean whiteTurn;
+    HiveGame() {
+        board = new Board();
+    }
 
-    public HiveGame(){
-        hiveBoard = HiveBoard.getInstance();
-        blackPlayer = new HivePlayer(Player.BLACK);
-        whitePlayer = new HivePlayer(Player.WHITE);
-        whiteTurn = true;
+    HiveGame(Board board) {
+        this.board = board;
     }
 
     @Override
     public void play(Tile tile, int q, int r) throws IllegalMove {
-        //get current player
-        HivePlayer player = whiteTurn ? whitePlayer : blackPlayer;
-        HivePlayer opponent = whiteTurn ? blackPlayer : whitePlayer;
-        //check if player HAS the tile left over
-        if(!player.hasTile(tile)){
-            throw new IllegalMove("Player does not have this tile in hand!");
+        var coordinate = new Coordinate(q, r);
+        var existing = board.getTile(coordinate);
+        if (existing != null) {
+            throw new IllegalMove();
         }
-        //get the slot they want to place in, check if not null
-        if(hiveBoard.getTile(q, r)!=null){
-            throw new IllegalMove("This tile is already occupied!");
+        var neighbours = board.getNeighbours(coordinate);
+        // Throws an exception if there are no tiles next to the location except when it is the first turn
+        if ((!firstTurn || turn == Player.BLACK) && neighbours.size() == 0) {
+            throw new IllegalMove();
         }
-        //find out if this is the first move
-        if(player.hasAllTiles() && getPlayerFromColor(getOpponent(player.getPlayerColor())).hasAllTiles()){
-            player.removeTile(tile);
-            hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
-            whiteTurn = !whiteTurn;
-            return;
+        // Throw exception if all of these kind of tiles are already in play
+        var currentlyInPlay = board.inPlayOf(turn, tile);
+        var limit = tileLimit.get(tile);
+        if (currentlyInPlay >= limit) {
+            throw new IllegalMove();
         }
-        //find the tile's neighbours. May not be empty, tiles have to connect
-        List<BoardTile> neighbours = hiveBoard.getNeighbours(q, r);
-        if(neighbours.isEmpty()){
-            throw new IllegalMove("The tile has to connect to another tile!");
-        }
-        //its not the first move, check if the player has any tiles placed already
-        if(player.hasAllTiles()){
-            //they dont have tiles on the board yet, so it needs to be placed against an opposite color tile (the only one on the field)
-            player.removeTile(tile);
-            hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
-            whiteTurn = !whiteTurn;
-            return;
-        }
-        //they already have tiles on the board
-        boolean foundOwnColorTile = false;
-        for(BoardTile boardTile: neighbours){
-            if(boardTile.getColor()==opponent.getPlayerColor()){
-                throw new IllegalMove("Tile connects to your opponent!");
+        connectedToTile(neighbours);
+
+        // Throw exception if there already 3 or more of the players tiles placed on the board and the queen is not
+        if (tile != Tile.QUEEN_BEE && board.inPlayOf(turn, Tile.QUEEN_BEE) == 0) {
+            var count = 0;
+            for (var t : Tile.values()) {
+                count += board.inPlayOf(turn, t);
             }
-            if(boardTile.getColor()==player.getPlayerColor()){
-               foundOwnColorTile = true;
+            if (count >= 3) {
+                throw new IllegalMove();
             }
         }
-        if(!foundOwnColorTile){
-            //we have to connect to our own color, so this move isnt valid.
-            throw new IllegalMove("Tile does not connect to your color!");
+
+        board.placeTile(turn, tile, coordinate);
+        // Change the value of first turn after the first turn
+        if (firstTurn && turn == Player.BLACK) {
+            firstTurn = false;
         }
-        //check if the player already has 3 tiles on the board, and if the queen bee is placed
-        if(player.getTilesInPlay()==3&&player.hasTile(Tile.QUEEN_BEE)&&tile!=Tile.QUEEN_BEE){
-            throw new IllegalMove("On the fourth move, your queen bee must be placed!");
+        switchPlayerTurn();
+    }
+
+    private void connectedToTile(ArrayList<BoardTile> neighbours) throws IllegalMove {
+        // Can not place a tile next to the opponent after turn 1
+        if (!firstTurn) {
+            for (var t : neighbours) {
+                if (t.getPlayer() != turn) {
+                    throw new IllegalMove();
+                }
+            }
         }
-        //we found a tile to connect to, AND no tiles from the opponent as neighbours
-        player.removeTile(tile);
-        hiveBoard.placeTile(new BoardTile(q, r, tile, player.getPlayerColor()));
-        whiteTurn = !whiteTurn;
-        return;
+    }
+
+    /**
+     * Switch who's players turn it is
+     */
+    private void switchPlayerTurn() {
+        turn = getOpponent(turn);
+    }
+
+    private Player getOpponent(Player player) {
+        return player == Player.WHITE ? Player.BLACK : Player.WHITE;
     }
 
     @Override
     public void move(int fromQ, int fromR, int toQ, int toR) throws IllegalMove {
-        whiteTurn = !whiteTurn;
+        if (board.inPlayOf(turn, Tile.QUEEN_BEE) == 0) {
+            throw new IllegalMove();
+        }
+        var from = new Coordinate(fromQ, fromR);
+        var to = new Coordinate(toQ, toR);
+        board.moveTile(from, to);
+        switchPlayerTurn();
     }
 
     @Override
     public void pass() throws IllegalMove {
-        whiteTurn = !whiteTurn;
+        switchPlayerTurn();
     }
 
     @Override
     public boolean isWinner(Player player) {
-        BoardTile tile = hiveBoard.getQueenByPlayer(player);
-        if(tile==null){
+        var opponent = getOpponent(player);
+        return !isDraw() && queenSurrounded(opponent);
+    }
+
+    private boolean queenSurrounded(Player player) {
+        var locations = board.getTileLocations(Tile.QUEEN_BEE, player);
+        if (locations.isEmpty()) {
             return false;
         }
-        List<BoardTile> neighbours = hiveBoard.getNeighbours(tile.getxCoord(), tile.getyCoord());
-        if(neighbours.size()<6){
-            return false;
-        }
-        int highest_tiles = 0;
-        for(BoardTile t: neighbours){
-            if(hiveBoard.isTopTile(t)){
-                highest_tiles++;
-            }
-        }
-        return highest_tiles==6;
+        var queen = locations.get(0);
+        var tmp =  board.getNeighbours(queen);
+        return tmp.size() == 6;
     }
 
     @Override
     public boolean isDraw() {
-        return false;
-    }
-
-    public Player getOpponent(Player currentPlayer){
-        return currentPlayer==Player.BLACK ? Player.WHITE : Player.BLACK;
-    }
-
-    public HivePlayer getPlayerFromColor(Player color){
-        return color==Player.BLACK ? blackPlayer : whitePlayer;
+        return (queenSurrounded(Player.WHITE) && queenSurrounded(Player.BLACK));
     }
 }

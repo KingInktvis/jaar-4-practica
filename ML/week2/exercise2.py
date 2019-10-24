@@ -100,7 +100,7 @@ print ("en het weergeven van de dimensionaliteit van het resultaat")
 matr = get_y_matrix(y, m)
 print (matr.shape)
 print ("Dit zou (5000,10) moeten zijn.")
-input ("Druk op Return om verder te gaan.")
+# input ("Druk op Return om verder te gaan.")
 
 
 # ========================  OPGAVE 2c ========================
