@@ -57,8 +57,9 @@ class BoardTest {
         board.placeTile(Player.BLACK, Tile.BEETLE, new Coordinate(-1, 1));
         board.placeTile(Player.BLACK, Tile.BEETLE, new Coordinate(1, -1));
         board.placeTile(Player.BLACK, Tile.BEETLE, new Coordinate(-4, 0));
-        assertEquals(2, board.getNeighbours(new Coordinate(0,0)).size());
+        assertEquals(2, board.getNeighbours(new Coordinate(0, 0)).size());
     }
+
     @Test
     void testNeighboursWhenFullySurrounded() {
         var board = new Board();

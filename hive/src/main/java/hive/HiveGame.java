@@ -117,7 +117,7 @@ public class HiveGame implements Hive {
             return false;
         }
         var queen = locations.get(0);
-        var tmp =  board.getNeighbours(queen);
+        var tmp = board.getNeighbours(queen);
         return tmp.size() == 6;
     }
 

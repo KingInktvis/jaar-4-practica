@@ -46,11 +46,14 @@ public class Board {
         if (ogPosition.empty()) {
             throw new Hive.IllegalMove();
         }
+        var next = getBoardPosition(destination);
+        var tile = ogPosition.pop();
+        next.push(tile);
     }
 
     int inPlayOf(Player player, Tile tile) {
         var count = 0;
-        for (var position: board.entrySet()) {
+        for (var position : board.entrySet()) {
             for (var entry : position.getValue()) {
                 if (entry.getType() == tile && entry.getPlayer() == player) {
                     ++count;
@@ -85,16 +88,7 @@ public class Board {
     }
 
     private ArrayList<Coordinate> neighbouringCoordinates(Coordinate coordinate) {
-        var positions = new ArrayList<Coordinate>();
-        for (int i = -1; i <= 1; ++i) {
-            for (int j = -1; j <= 1; ++j) {
-                if (i != j) {
-                    var c = new Coordinate(coordinate.getQ() + i, coordinate.getR() + j);
-                    positions.add(c);
-                }
-            }
-        }
-        return positions;
+        return coordinate.adjacentCoordinates();
     }
 
     boolean allTilesConnected() {
@@ -124,5 +118,16 @@ public class Board {
                 }
             }
         }
+    }
+
+    ArrayList<Coordinate> getEmptyAdjacentLocations(Coordinate coordinate) {
+        var adjacent = coordinate.adjacentCoordinates();
+        var empty = new ArrayList<Coordinate>();
+        for (var tile : adjacent) {
+            if (getTile(tile) == null) {
+                empty.add(tile);
+            }
+        }
+        return empty;
     }
 }

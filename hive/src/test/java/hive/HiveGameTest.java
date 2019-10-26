@@ -116,9 +116,9 @@ class HiveGameTest {
     @Test
     void moveTile() throws IllegalMove {
         var game = new HiveGame();
-        game.play(Tile.QUEEN_BEE, 0,0);
-        game.play(Tile.QUEEN_BEE, 1,0);
-        game.move(0,0, 0, 1);
+        game.play(Tile.QUEEN_BEE, 0, 0);
+        game.play(Tile.QUEEN_BEE, 1, 0);
+        game.move(0, 0, 0, 1);
     }
 
     @Test
@@ -137,7 +137,7 @@ class HiveGameTest {
     void canNotMoveBeforePlayingQueen() throws IllegalMove {
         var game = new HiveGame();
         game.play(Tile.SOLDIER_ANT, 0, 0);
-        game.play(Tile.QUEEN_BEE, 0,1);
+        game.play(Tile.QUEEN_BEE, 0, 1);
         assertThrows(IllegalMove.class, () -> {
             game.move(0, 0, 1, 0);
         });

@@ -47,7 +47,7 @@ class CoordinateTest {
 
     @Test
     void testCommonNeighbours() {
-        var c1 = new Coordinate(0,0);
+        var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
         var c3 = new Coordinate(1, -1);
         var c4 = new Coordinate(0, 1);
@@ -72,5 +72,23 @@ class CoordinateTest {
         res = c1.commonNeighbours(c7);
         assertTrue(res.contains(c6));
         assertTrue(res.contains(c3));
+    }
+
+    @Test
+    void testAreNeighbours() {
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(1, 0);
+        var c3 = new Coordinate(1, -1);
+        var c4 = new Coordinate(0, 1);
+        var c5 = new Coordinate(-1, 1);
+        var c6 = new Coordinate(-1, 0);
+        var c7 = new Coordinate(0, -1);
+        assertTrue(c1.areNeighbours(c2));
+        assertTrue(c1.areNeighbours(c3));
+        assertTrue(c1.areNeighbours(c4));
+        assertTrue(c1.areNeighbours(c5));
+        assertTrue(c1.areNeighbours(c6));
+        assertTrue(c1.areNeighbours(c7));
+        assertFalse(c2.areNeighbours(c5));
     }
 }
