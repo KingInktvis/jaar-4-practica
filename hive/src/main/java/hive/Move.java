@@ -22,6 +22,7 @@ public class Move {
         return true;
     }
 
+    //todo remove function
     static boolean checkToAdjacentTileWithOneStep(Board board, Coordinate to) {
         var neighbours = board.getNeighbours(to);
         if (neighbours.size() <= 1) {
@@ -86,9 +87,9 @@ public class Move {
     }
 
     private static boolean antMovement(Board board, Coordinate from, Coordinate to) {
-        board.getEmptyAdjacentLocations(from);
-
-        return true;
+        var history = new ArrayList<Coordinate>();
+        history.add(from);
+        return dfsPath(board, history, from, to);
     }
 
     private static boolean dfsPath(Board board, ArrayList<Coordinate> visited, Coordinate start, Coordinate destination) {
@@ -97,13 +98,31 @@ public class Move {
             adjacent.remove(i);
         }
         for (var i : adjacent) {
-            try {
-                board.moveTile(start, i);
-            } catch (Hive.IllegalMove illegalMove) {
-                illegalMove.printStackTrace();
+            if (stayConnectedOneStep(board, start, i) && gapForMovement(board, start, i)) {
+                try {
+                    board.moveTile(start, i);
+                } catch (Hive.IllegalMove illegalMove) {
+                    illegalMove.printStackTrace();
+                }
+                if (board.allTilesConnected()) {
+                    if (i.equals(destination)) {
+                        return true;
+                    }else {
+                        visited.add(i);
+                        var tmp = dfsPath(board, visited, i, destination);
+                        visited.remove(i);
+                        if (tmp) {
+                            return true;
+                        }
+                    }
+                }
+                try {
+                    board.moveTile(i, start);
+                } catch (Hive.IllegalMove illegalMove) {
+                    illegalMove.printStackTrace();
+                }
             }
-
         }
-        return true;
+        return false;
     }
 }

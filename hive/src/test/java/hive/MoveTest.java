@@ -68,6 +68,7 @@ class MoveTest {
 
     }
 
+    @Test
     void testAntMovement() {
         var board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, -1));
@@ -78,8 +79,8 @@ class MoveTest {
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(1, 1));
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(0, 2));
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(-1, 2));
-        board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(0, 0));
+        board.placeTile(Player.BLACK, Tile.SOLDIER_ANT, new Coordinate(0, 0));
         assertFalse(isValidMove(board, new Coordinate(0, 0), new Coordinate(2, 0)));
-        assertFalse(isValidMove(board, new Coordinate(-1, 0), new Coordinate(2, 0)));
+        assertTrue(isValidMove(board, new Coordinate(-1, 0), new Coordinate(2, 0)));
     }
 }
