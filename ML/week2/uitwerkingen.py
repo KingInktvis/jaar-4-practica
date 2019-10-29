@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
 
-
 # ==== OPGAVE 1 ====
 def plotNumber(nrVector):
     # Let op: de manier waarop de data is opgesteld vereist dat je gebruik maakt
@@ -15,6 +14,7 @@ def plotNumber(nrVector):
     plt.matshow(matrix)
     plt.show()
 
+    pass
 
 # ==== OPGAVE 2a ====
 def sigmoid(z):
@@ -68,8 +68,10 @@ def predictNumber(Theta1, Theta2, X):
 
     # Voeg enen toe aan het begin van elke stap en reshape de uiteindelijke
     # vector zodat deze dezelfde dimensionaliteit heeft als y in de exercise.
-    
+    t1 = Theta1.shape
+    t2 = Theta2.shape
     pass
+
 
 
 # ===== deel 2: =====
@@ -86,6 +88,7 @@ def computeCost(Theta1, Theta2, X, y):
     pass
 
 
+
 # ==== OPGAVE 3a ====
 def sigmoidGradient(z): 
     # Retourneer hier de waarde van de afgeleide van de sigmoïdefunctie.
@@ -93,7 +96,6 @@ def sigmoidGradient(z):
     # scalaire waarden en met vectoren.
 
     pass
-
 
 # ==== OPGAVE 3b ====
 def nnCheckGradients(Theta1, Theta2, X, y): 

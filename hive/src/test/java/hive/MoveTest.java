@@ -1,5 +1,6 @@
 package hive;
 
+import nl.hanze.hive.Hive;
 import nl.hanze.hive.Hive.Player;
 import nl.hanze.hive.Hive.Tile;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ class MoveTest {
         var board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, 0));
         board.placeTile(Player.BLACK, Tile.QUEEN_BEE, new Coordinate(1, 0));
-        assertFalse(checkToAdjacentTileWithOneStep(board, new Coordinate(2, 0)));
+        assertFalse(checkAdjacentToTileWithOneStep(board, new Coordinate(2, 0)));
     }
 
     @Test
@@ -69,7 +70,7 @@ class MoveTest {
     }
 
     @Test
-    void testAntMovement() {
+    void testAntMovement() throws Hive.IllegalMove {
         var board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, -1));
         board.placeTile(Player.BLACK, Tile.QUEEN_BEE, new Coordinate(1, -1));

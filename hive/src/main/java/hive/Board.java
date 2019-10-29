@@ -17,13 +17,13 @@ public class Board {
     }
 
     private Stack<BoardTile> getBoardPosition(Coordinate coordinate) {
-        var res = board.get(coordinate);
-        if (res == null) {
+        var position = board.get(coordinate);
+        if (position == null) {
             var stack = new Stack<BoardTile>();
             board.put(coordinate, stack);
-            res = board.get(coordinate);
+            position = board.get(coordinate);
         }
-        return res;
+        return position;
     }
 
     void placeTile(Player player, Tile tile, Coordinate coordinate) {
@@ -64,27 +64,27 @@ public class Board {
     }
 
     ArrayList<Coordinate> getTileLocations(Tile tile, Player player) {
-        var ret = new ArrayList<Coordinate>();
+        var list = new ArrayList<Coordinate>();
         for (var position : board.entrySet()) {
             for (var entry : position.getValue()) {
                 if (entry.getType() == tile && entry.getPlayer() == player) {
-                    ret.add(position.getKey());
+                    list.add(position.getKey());
                 }
             }
         }
-        return ret;
+        return list;
     }
 
     ArrayList<BoardTile> getNeighbours(Coordinate coordinate) {
-        var ret = new ArrayList<BoardTile>();
-        var positions = neighbouringCoordinates(coordinate);
-        for (var position : positions) {
-            var tmp = getBoardPosition(position);
-            if (!tmp.isEmpty()) {
-                ret.add(tmp.peek());
+        var list = new ArrayList<BoardTile>();
+        var locations = coordinate.adjacentCoordinates();
+        for (var location : locations) {
+            var position = getBoardPosition(location);
+            if (!position.isEmpty()) {
+                list.add(position.peek());
             }
         }
-        return ret;
+        return list;
     }
 
     private ArrayList<Coordinate> neighbouringCoordinates(Coordinate coordinate) {
@@ -113,7 +113,7 @@ public class Board {
         for (var tile : tiles) {
             if (!list.contains(tile)) {
                 list.add(tile);
-                for (var c : neighbouringCoordinates(position)) {
+                for (var c : position.adjacentCoordinates()) {
                     recursiveAddToList(list, c);
                 }
             }

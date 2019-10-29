@@ -5,7 +5,7 @@ import nl.hanze.hive.Hive;
 import java.util.ArrayList;
 
 public class Move {
-    static boolean isValidMove(Board board, Coordinate from, Coordinate to) {
+    static boolean isValidMove(Board board, Coordinate from, Coordinate to) throws Hive.IllegalMove {
         var tile = board.getTile(from);
         switch (tile.getType()) {
             case QUEEN_BEE:
@@ -22,8 +22,7 @@ public class Move {
         return true;
     }
 
-    //todo remove function
-    static boolean checkToAdjacentTileWithOneStep(Board board, Coordinate to) {
+    static boolean checkAdjacentToTileWithOneStep(Board board, Coordinate to) {
         var neighbours = board.getNeighbours(to);
         if (neighbours.size() <= 1) {
             return false;
@@ -63,47 +62,34 @@ public class Move {
         return value;
     }
 
-    private static boolean queenMovement(Board board, Coordinate from, Coordinate to) {
+    private static boolean queenMovement(Board board, Coordinate from, Coordinate to) throws Hive.IllegalMove {
         if (!from.areNeighbours(to) || from.equals(to)) {
             return false;
         }
         if (stayConnectedOneStep(board, from, to) && gapForMovement(board, from, to)) {
-            try {
-                board.moveTile(from, to);
-            } catch (Hive.IllegalMove illegalMove) {
-                illegalMove.printStackTrace();
-            }
-            boolean value;
-            value = board.allTilesConnected();
-            try {
-                board.moveTile(to, from);
-            } catch (Hive.IllegalMove illegalMove) {
-                illegalMove.printStackTrace();
-            }
+            board.moveTile(from, to);
+            boolean value = board.allTilesConnected();
+            board.moveTile(to, from);
             return value;
         } else {
             return false;
         }
     }
 
-    private static boolean antMovement(Board board, Coordinate from, Coordinate to) {
+    private static boolean antMovement(Board board, Coordinate from, Coordinate to) throws Hive.IllegalMove {
         var history = new ArrayList<Coordinate>();
         history.add(from);
         return dfsPath(board, history, from, to);
     }
 
-    private static boolean dfsPath(Board board, ArrayList<Coordinate> visited, Coordinate start, Coordinate destination) {
+    private static boolean dfsPath(Board board, ArrayList<Coordinate> visited, Coordinate start, Coordinate destination) throws Hive.IllegalMove {
         var adjacent = board.getEmptyAdjacentLocations(start);
         for (var i : visited) {
             adjacent.remove(i);
         }
         for (var i : adjacent) {
             if (stayConnectedOneStep(board, start, i) && gapForMovement(board, start, i)) {
-                try {
-                    board.moveTile(start, i);
-                } catch (Hive.IllegalMove illegalMove) {
-                    illegalMove.printStackTrace();
-                }
+                board.moveTile(start, i);
                 if (board.allTilesConnected()) {
                     if (i.equals(destination)) {
                         return true;
@@ -116,11 +102,7 @@ public class Move {
                         }
                     }
                 }
-                try {
-                    board.moveTile(i, start);
-                } catch (Hive.IllegalMove illegalMove) {
-                    illegalMove.printStackTrace();
-                }
+                board.moveTile(i, start);
             }
         }
         return false;
