@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
 
+
 # ==== OPGAVE 1 ====
 def plotNumber(nrVector):
     # Let op: de manier waarop de data is opgesteld vereist dat je gebruik maakt
@@ -15,6 +16,7 @@ def plotNumber(nrVector):
     plt.show()
 
     pass
+
 
 # ==== OPGAVE 2a ====
 def sigmoid(z):
@@ -38,7 +40,7 @@ def get_y_matrix(y, m):
     x = np.amax(y)
     m = y.shape[0]
     rows = [i for i in range(m)]
-    cols = [i[0]-1 for i in y]
+    cols = [i[0] - 1 for i in y]
     data = [1 for _ in cols]
     matrix = csr_matrix((data, (rows, cols)), shape=(m, x))
     return matrix
@@ -78,7 +80,6 @@ def predictNumber(Theta1, Theta2, X):
     return X6
 
 
-
 # ===== deel 2: =====
 def computeCost(Theta1, Theta2, X, y):
     # Deze methode maakt gebruik van de methode predictNumber() die je hierboven hebt
@@ -89,33 +90,34 @@ def computeCost(Theta1, Theta2, X, y):
     # Let op: de y die hier binnenkomt is de m×1-vector met waarden van 1...10. 
     # Maak gebruik van de methode get_y_matrix() die je in opgave 2a hebt gemaakt
     # om deze om te zetten naar een matrix. 
+    prediction = predictNumber(Theta1, Theta2, X)
 
     pass
 
 
-
 # ==== OPGAVE 3a ====
-def sigmoidGradient(z): 
+def sigmoidGradient(z):
     # Retourneer hier de waarde van de afgeleide van de sigmoïdefunctie.
     # Zie de opgave voor de exacte formule. Zorg ervoor dat deze werkt met
     # scalaire waarden en met vectoren.
 
     pass
 
+
 # ==== OPGAVE 3b ====
-def nnCheckGradients(Theta1, Theta2, X, y): 
+def nnCheckGradients(Theta1, Theta2, X, y):
     # Retourneer de gradiënten van Theta1 en Theta2, gegeven de waarden van X en van y
     # Zie het stappenplan in de opgaven voor een mogelijke uitwerking.
 
     Delta2 = np.zeros(Theta1.shape)
     Delta3 = np.zeros(Theta2.shape)
-    m = 1 #voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
+    m = 1  # voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
 
-    for i in range(m): 
-        #YOUR CODE HERE
+    for i in range(m):
+        # YOUR CODE HERE
         pass
 
     Delta2_grad = Delta2 / m
     Delta3_grad = Delta3 / m
-    
+
     return Delta2_grad, Delta3_grad
