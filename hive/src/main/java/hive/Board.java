@@ -12,7 +12,7 @@ public class Board {
     private HashMap<Coordinate, Stack<BoardTile>> board;
     private int tileCount = 0;
 
-    Board() {
+    public Board() {
         board = new HashMap<>();
     }
 
@@ -26,7 +26,7 @@ public class Board {
         return position;
     }
 
-    void placeTile(Player player, Tile tile, Coordinate coordinate) {
+    public void placeTile(Player player, Tile tile, Coordinate coordinate) {
         var newTile = new BoardTile(tile, player);
         var position = getBoardPosition(coordinate);
         position.push(newTile);

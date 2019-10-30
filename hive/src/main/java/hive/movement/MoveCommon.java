@@ -38,13 +38,13 @@ public class MoveCommon {
         return true;
     }
 
-    public ArrayList<Coordinate> getCoordinatesInRange(Coordinate center, int range){
+    public ArrayList<Coordinate> getCoordinatesInRange(Board board, Coordinate center, int range, boolean canMoveThroughTiles){
         ArrayList<Coordinate> queue = new ArrayList<>();
         queue.add(center);
-        return getCoordinatesInRangeRecursive(range, queue);
+        return getCoordinatesInRangeRecursive(board, range, queue, canMoveThroughTiles);
     }
 
-    private ArrayList<Coordinate> getCoordinatesInRangeRecursive(int range, ArrayList<Coordinate> queue){
+    private ArrayList<Coordinate> getCoordinatesInRangeRecursive(Board board, int range, ArrayList<Coordinate> queue, boolean canMoveThroughTiles){
         ArrayList<Coordinate> visitedNodes = new ArrayList<>();
         ArrayList<Coordinate> coordinatesInRange = new ArrayList<>();
         while(!queue.isEmpty() && range>0){
@@ -56,7 +56,10 @@ public class MoveCommon {
                     continue;
                 }
                 visitedNodes.add(current);
-                ArrayList<Coordinate> neighbours = current.adjacentCoordinates();
+                ArrayList<Coordinate> neighbours = canMoveThroughTiles ? current.adjacentCoordinates() : board.getEmptyAdjacentLocations(current);
+                if(!canMoveThroughTiles){
+                    neighbours = filterNeighboursThroughMovement(board, neighbours, current);
+                }
                 for(Coordinate neigh: neighbours){
                     if(!coordinatesInRange.contains(neigh)){
                         coordinatesInRange.add(neigh);
@@ -68,6 +71,20 @@ public class MoveCommon {
         }
         coordinatesInRange.remove(new Coordinate(0, 0));
         return coordinatesInRange;
+    }
+
+    public static ArrayList<Coordinate> filterNeighboursThroughMovement(Board board, ArrayList<Coordinate> neighbours, Coordinate startPosition){
+        ArrayList<Coordinate> neighboursToReturn = new ArrayList<>();
+        for(Coordinate neigh: neighbours){
+            ArrayList<Coordinate> commonNeighbours = neigh.commonNeighbours(startPosition);
+            for(Coordinate coord: commonNeighbours){
+                if(board.getTile(coord)==null){
+                    neighboursToReturn.add(neigh);
+                    break;
+                }
+            }
+        }
+        return neighboursToReturn;
     }
 
     public static boolean checkAdjacentToTileWithOneStep(Board board, Coordinate to) {
