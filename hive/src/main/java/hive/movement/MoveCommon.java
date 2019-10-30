@@ -47,6 +47,7 @@ public class MoveCommon {
     private ArrayList<Coordinate> getCoordinatesInRangeRecursive(Board board, int range, ArrayList<Coordinate> queue, boolean canMoveThroughTiles){
         ArrayList<Coordinate> visitedNodes = new ArrayList<>();
         ArrayList<Coordinate> coordinatesInRange = new ArrayList<>();
+        Coordinate startposition = queue.get(0);
         while(!queue.isEmpty() && range>0){
             ArrayList<Coordinate> subqueue = new ArrayList<>(queue);
             queue.clear();
@@ -69,13 +70,16 @@ public class MoveCommon {
             }
             range--;
         }
-        coordinatesInRange.remove(new Coordinate(0, 0));
+        coordinatesInRange.remove(startposition);
         return coordinatesInRange;
     }
 
     public static ArrayList<Coordinate> filterNeighboursThroughMovement(Board board, ArrayList<Coordinate> neighbours, Coordinate startPosition){
         ArrayList<Coordinate> neighboursToReturn = new ArrayList<>();
         for(Coordinate neigh: neighbours){
+            if(!stayConnectedOneStep(board, startPosition, neigh)){
+                continue;
+            }
             ArrayList<Coordinate> commonNeighbours = neigh.commonNeighbours(startPosition);
             for(Coordinate coord: commonNeighbours){
                 if(board.getTile(coord)==null){

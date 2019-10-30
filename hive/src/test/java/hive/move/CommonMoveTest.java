@@ -96,4 +96,23 @@ public class CommonMoveTest {
         assertTrue(coords.contains(new Coordinate(-1, 0)));
         assertTrue(coords.contains(new Coordinate(-1, 1)));
     }
+
+    @Test
+    void getCoordinatesWithDisconnectedMovement(){
+        Board board = new Board();
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 1));
+
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, -1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(1, -1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(1, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-2, 1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-2, 2));
+
+        MoveCommon moveCommon = new MoveCommon();
+        ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(board, new Coordinate(-1, 1), 1, false);
+        assertTrue(coords.size()==2);
+        assertTrue(coords.contains(new Coordinate(0, 0)));
+        assertTrue(coords.contains(new Coordinate(-1, 2)));
+    }
 }
