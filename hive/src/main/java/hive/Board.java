@@ -33,7 +33,7 @@ public class Board {
         ++tileCount;
     }
 
-    BoardTile getTile(Coordinate coordinate) {
+    public BoardTile getTile(Coordinate coordinate) {
         var position = getBoardPosition(coordinate);
         if (position.empty()) {
             return null;
@@ -41,7 +41,7 @@ public class Board {
         return position.peek();
     }
 
-    void moveTile(Coordinate origin, Coordinate destination) throws Hive.IllegalMove {
+    public void moveTile(Coordinate origin, Coordinate destination) throws Hive.IllegalMove {
         var ogPosition = getBoardPosition(origin);
         if (ogPosition.empty()) {
             throw new Hive.IllegalMove();
@@ -75,7 +75,7 @@ public class Board {
         return list;
     }
 
-    ArrayList<BoardTile> getNeighbours(Coordinate coordinate) {
+    public ArrayList<BoardTile> getNeighbours(Coordinate coordinate) {
         var list = new ArrayList<BoardTile>();
         var locations = coordinate.adjacentCoordinates();
         for (var location : locations) {
@@ -91,7 +91,7 @@ public class Board {
         return coordinate.adjacentCoordinates();
     }
 
-    boolean allTilesConnected() {
+    public boolean allTilesConnected() {
         Coordinate start = null;
         var list = new ArrayList<BoardTile>();
         for (var position : board.entrySet()) {
@@ -120,7 +120,7 @@ public class Board {
         }
     }
 
-    ArrayList<Coordinate> getEmptyAdjacentLocations(Coordinate coordinate) {
+    public ArrayList<Coordinate> getEmptyAdjacentLocations(Coordinate coordinate) {
         var adjacent = coordinate.adjacentCoordinates();
         var empty = new ArrayList<Coordinate>();
         for (var tile : adjacent) {

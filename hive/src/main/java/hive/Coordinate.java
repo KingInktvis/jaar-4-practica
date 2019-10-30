@@ -7,7 +7,7 @@ public class Coordinate {
     private int q;
     private int r;
 
-    Coordinate(int q, int r) {
+    public Coordinate(int q, int r) {
         this.q = q;
         this.r = r;
     }
@@ -20,7 +20,7 @@ public class Coordinate {
         return r;
     }
 
-    ArrayList<Coordinate> commonNeighbours(Coordinate coordinate) {
+    public ArrayList<Coordinate> commonNeighbours(Coordinate coordinate) {
         var qDiff = q - coordinate.getQ();
         var rDiff = r - coordinate.getR();
         var res = new ArrayList<Coordinate>();
@@ -46,13 +46,13 @@ public class Coordinate {
         return res;
     }
 
-    boolean areNeighbours(Coordinate coordinate) {
+    public boolean areNeighbours(Coordinate coordinate) {
         var qDiff = q - coordinate.getQ();
         var rDiff = r - coordinate.getR();
         return -1 <= qDiff && qDiff <= 1 && -1 <= rDiff && rDiff <= 1;
     }
 
-    ArrayList<Coordinate> adjacentCoordinates() {
+    public ArrayList<Coordinate> adjacentCoordinates() {
         var positions = new ArrayList<Coordinate>();
         for (int i = -1; i <= 1; ++i) {
             for (int j = -1; j <= 1; ++j) {
