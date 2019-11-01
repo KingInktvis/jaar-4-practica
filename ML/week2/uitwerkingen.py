@@ -37,13 +37,20 @@ def get_y_matrix(y, m):
     # y_i=10, dan is regel i in de matrix [0,0,...1] (in dit geval is de breedte
     # van de matrix 10 (0-9), maar de methode moet werken voor elke waarde van 
     # y en m
+
     x = np.amax(y)
     m = y.shape[0]
-    rows = [i for i in range(m)]
-    cols = [i[0] - 1 for i in y]
-    data = [1 for _ in cols]
-    matrix = csr_matrix((data, (rows, cols)), shape=(m, x))
-    return matrix
+    # rows = [i for i in range(m)]
+    # cols = [i[0] - 1 for i in y]
+    # data = [1 for _ in cols]
+    # matrix = csr_matrix((data, (rows, cols)), shape=(m, x))
+    # return matrix
+
+    ret = np.zeros((m, x))
+    for i in range(m):
+        col = y[i] -1
+        ret[i][col] = 1
+    return ret
 
 
 # ==== OPGAVE 2c ==== 
@@ -89,10 +96,19 @@ def computeCost(Theta1, Theta2, X, y):
     # geretourneerd.
     # Let op: de y die hier binnenkomt is de m×1-vector met waarden van 1...10. 
     # Maak gebruik van de methode get_y_matrix() die je in opgave 2a hebt gemaakt
-    # om deze om te zetten naar een matrix. 
+    # om deze om te zetten naar een matrix.
+    m = X.shape[0]
+    y_matrix = get_y_matrix(y, 10)
     prediction = predictNumber(Theta1, Theta2, X)
-
-    pass
+    part1 = y_matrix * np.log(prediction)
+    part2 = (1 - y_matrix) * np.log(1 - prediction)
+    sum = part1 + part2
+    col = np.ones((10, 1))
+    sum_k = sum.dot(col)
+    row = np.ones((5000, 1))
+    sum_j = sum_k.T.dot(row)
+    total = -1 / m * sum_j
+    return total
 
 
 # ==== OPGAVE 3a ====
