@@ -116,8 +116,8 @@ def sigmoidGradient(z):
     # Retourneer hier de waarde van de afgeleide van de sigmoïdefunctie.
     # Zie de opgave voor de exacte formule. Zorg ervoor dat deze werkt met
     # scalaire waarden en met vectoren.
-
-    pass
+    g = sigmoid(z)
+    return g * (1 - g)
 
 
 # ==== OPGAVE 3b ====

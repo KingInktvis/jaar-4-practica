@@ -122,7 +122,7 @@ print("Dit zou zo rond de 7 moeten liggen.")
 acc = np.count_nonzero([pred - y == 0])
 print("Correct geclassificeerd: {}".format(acc))
 print("De huidige accuratessse van het netwerk is {} %".format(100 * acc / m))
-input("Druk op Return om verder te gaan.")
+# input("Druk op Return om verder te gaan.")
 
 # ========================  OPGAVE 3 ======================== 
 print("")
