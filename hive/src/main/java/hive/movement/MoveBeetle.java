@@ -9,21 +9,7 @@ import nl.hanze.hive.Hive;
  */
 public class MoveBeetle {
 
-    static boolean beetleMovement(Board board, Coordinate from, Coordinate to) {
-        if (!from.areNeighbours(to)) {
-            return false;
-        }
-        try {
-            board.moveTile(from, to);
-        } catch (Hive.IllegalMove illegalMove) {
-            return false;
-        }
-        var value = board.allTilesConnected();
-        try {
-            board.moveTile(from, to);
-        } catch (Hive.IllegalMove illegalMove) {
-            return false;
-        }
-        return value;
+    public static boolean canBeetleMove(Board board, Coordinate from, Coordinate to) {
+        return MoveCommon.getCoordinatesInRange(board, from, 1, true).contains(to);
     }
 }
