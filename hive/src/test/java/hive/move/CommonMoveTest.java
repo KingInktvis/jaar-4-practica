@@ -25,7 +25,15 @@ public class CommonMoveTest {
     @Test
     void getCoordinatesInRadiusOneTest(){
         MoveCommon moveCommon = new MoveCommon();
-        ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(new Board(), new Coordinate(0, 0), 1, true);
+        Board board = new Board();
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(1, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 1));
+        board.placeTile(Hive.Player.WHITE, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 0));
+        board.placeTile(Hive.Player.WHITE, Hive.Tile.QUEEN_BEE, new Coordinate(0, -1));
+        board.placeTile(Hive.Player.WHITE, Hive.Tile.QUEEN_BEE, new Coordinate(1, -1));
+        ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(board, new Coordinate(0, 0), 1, true);
         assertTrue(coords.size()==6);
         assertTrue(coords.contains(new Coordinate(-1, 0)));
         assertTrue(coords.contains(new Coordinate(0, -1)));
@@ -38,7 +46,15 @@ public class CommonMoveTest {
     @Test
     void getCoordinatesInRadiusTwoTest(){
         MoveCommon moveCommon = new MoveCommon();
-        ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(new Board(), new Coordinate(0, 0), 2, true);
+        Board board = new Board();
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(1, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 1));
+        board.placeTile(Hive.Player.WHITE, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 0));
+        board.placeTile(Hive.Player.WHITE, Hive.Tile.QUEEN_BEE, new Coordinate(0, -1));
+        board.placeTile(Hive.Player.WHITE, Hive.Tile.QUEEN_BEE, new Coordinate(1, -1));
+        ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(board, new Coordinate(0, 0), 2, true);
         assertTrue(coords.size()==18);
         assertTrue(coords.contains(new Coordinate(-1, 0)));
         assertTrue(coords.contains(new Coordinate(0, -1)));
