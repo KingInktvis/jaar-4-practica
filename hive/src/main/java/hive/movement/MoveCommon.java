@@ -13,7 +13,7 @@ public class MoveCommon {
 
     public static boolean isValidMove(Board board, Coordinate from, Coordinate to) throws Hive.IllegalMove {
         var tile = board.getTile(from);
-        if(!isCommonValidMove(board, from, to)){
+        if (!isCommonValidMove(board, from, to)) {
             return false;
         }
         switch (tile.getType()) {
@@ -22,47 +22,47 @@ public class MoveCommon {
             case SPIDER:
                 break;
             case BEETLE:
-                return MoveBeetle.beetleMovement(board, from, to);
+                return MoveBeetle.canBeetleMove(board, from, to);
             case GRASSHOPPER:
                 break;
             case SOLDIER_ANT:
-                return antMovement(board, from, to);
+                return MoveAnt.canAntMove(board, from, to);
         }
         return true;
     }
 
-    public static boolean isCommonValidMove(Board board, Coordinate from, Coordinate to){
-        if(from.equals(to)){
+    public static boolean isCommonValidMove(Board board, Coordinate from, Coordinate to) {
+        if (from.equals(to)) {
             return false;
         }
         return true;
     }
 
-    public ArrayList<Coordinate> getCoordinatesInRange(Board board, Coordinate center, int range, boolean canMoveThroughTiles){
+    public static ArrayList<Coordinate> getCoordinatesInRange(Board board, Coordinate center, int range, boolean canMoveThroughTiles) {
         ArrayList<Coordinate> queue = new ArrayList<>();
         queue.add(center);
-        return getCoordinatesInRangeRecursive(board, range, queue, canMoveThroughTiles);
+        return filterNoNeighbours(board, center, getCoordinatesInRangeRecursive(board, range, queue, canMoveThroughTiles));
     }
 
-    private ArrayList<Coordinate> getCoordinatesInRangeRecursive(Board board, int range, ArrayList<Coordinate> queue, boolean canMoveThroughTiles){
+    private static ArrayList<Coordinate> getCoordinatesInRangeRecursive(Board board, int range, ArrayList<Coordinate> queue, boolean canMoveThroughTiles) {
         ArrayList<Coordinate> visitedNodes = new ArrayList<>();
         ArrayList<Coordinate> coordinatesInRange = new ArrayList<>();
         Coordinate startposition = queue.get(0);
-        while(!queue.isEmpty() && range>0){
+        while (!queue.isEmpty() && range > 0) {
             ArrayList<Coordinate> subqueue = new ArrayList<>(queue);
             queue.clear();
-            while(!subqueue.isEmpty()) {
+            while (!subqueue.isEmpty()) {
                 Coordinate current = subqueue.remove(0);
                 if (visitedNodes.contains(current)) {
                     continue;
                 }
                 visitedNodes.add(current);
                 ArrayList<Coordinate> neighbours = canMoveThroughTiles ? current.adjacentCoordinates() : board.getEmptyAdjacentLocations(current);
-                if(!canMoveThroughTiles){
+                if (!canMoveThroughTiles) {
                     neighbours = filterNeighboursThroughMovement(board, neighbours, current);
                 }
-                for(Coordinate neigh: neighbours){
-                    if(!coordinatesInRange.contains(neigh)){
+                for (Coordinate neigh : neighbours) {
+                    if (!coordinatesInRange.contains(neigh)) {
                         coordinatesInRange.add(neigh);
                     }
                 }
@@ -74,21 +74,33 @@ public class MoveCommon {
         return coordinatesInRange;
     }
 
-    public static ArrayList<Coordinate> filterNeighboursThroughMovement(Board board, ArrayList<Coordinate> neighbours, Coordinate startPosition){
+    public static ArrayList<Coordinate> filterNeighboursThroughMovement(Board board, ArrayList<Coordinate> neighbours, Coordinate startPosition) {
         ArrayList<Coordinate> neighboursToReturn = new ArrayList<>();
-        for(Coordinate neigh: neighbours){
-            if(!stayConnectedOneStep(board, startPosition, neigh)){
+        for (Coordinate neigh : neighbours) {
+            if (!stayConnectedOneStep(board, startPosition, neigh)) {
                 continue;
             }
             ArrayList<Coordinate> commonNeighbours = neigh.commonNeighbours(startPosition);
-            for(Coordinate coord: commonNeighbours){
-                if(board.getTile(coord)==null){
+            for (Coordinate coord : commonNeighbours) {
+                if (board.getTile(coord) == null) {
                     neighboursToReturn.add(neigh);
                     break;
                 }
             }
         }
         return neighboursToReturn;
+    }
+
+    private static ArrayList<Coordinate> filterNoNeighbours(Board board, Coordinate fromPosition, ArrayList<Coordinate> options){
+        ArrayList<Coordinate> filteredOptions = new ArrayList<>();
+        for(Coordinate coord:options){
+            for(Coordinate neighbour:coord.adjacentCoordinates()){
+                if(!neighbour.equals(fromPosition) && board.getTile(neighbour)!=null && !filteredOptions.contains(coord)){
+                    filteredOptions.add(coord);
+                }
+            }
+        }
+        return filteredOptions;
     }
 
     public static boolean checkAdjacentToTileWithOneStep(Board board, Coordinate to) {
@@ -127,35 +139,5 @@ public class MoveCommon {
         }
     }
 
-    private static boolean antMovement(Board board, Coordinate from, Coordinate to) throws Hive.IllegalMove {
-        var history = new ArrayList<Coordinate>();
-        history.add(from);
-        return dfsPath(board, history, from, to);
-    }
 
-    private static boolean dfsPath(Board board, ArrayList<Coordinate> visited, Coordinate start, Coordinate destination) throws Hive.IllegalMove {
-        var adjacent = board.getEmptyAdjacentLocations(start);
-        for (var i : visited) {
-            adjacent.remove(i);
-        }
-        for (var i : adjacent) {
-            if (stayConnectedOneStep(board, start, i) && gapForMovement(board, start, i)) {
-                board.moveTile(start, i);
-                if (board.allTilesConnected()) {
-                    if (i.equals(destination)) {
-                        return true;
-                    }else {
-                        visited.add(i);
-                        var tmp = dfsPath(board, visited, i, destination);
-                        visited.remove(i);
-                        if (tmp) {
-                            return true;
-                        }
-                    }
-                }
-                board.moveTile(i, start);
-            }
-        }
-        return false;
-    }
 }
