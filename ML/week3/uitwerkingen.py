@@ -48,7 +48,8 @@ def confMatrix(labels, pred):
     # waarden (labels). Check de documentatie van tf.math.confusion_matrix
     
     # YOUR CODE HERE
-    
+    pass
+
 
 # OPGAVE 2b
 def confEls(conf, labels): 
@@ -63,6 +64,7 @@ def confEls(conf, labels):
     # Check de documentatie van numpy diagonal om de eerste waarde te bepalen.
  
     # YOUR CODE HERE
+    pass
 
 # OPGAVE 2c
 def confData(metrics):
