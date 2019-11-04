@@ -14,6 +14,10 @@ public class MoveGrassHopper {
         return getGrassHopperOptions(board, from).contains(to);
     }
 
+    public static boolean doesGrassHopperHaveMoveOptions(Board board, Coordinate grassHopper){
+        return getGrassHopperOptions(board, grassHopper).size()>0;
+    }
+
     public static ArrayList<Coordinate> getGrassHopperOptions(Board board, Coordinate from){
         ArrayList<Coordinate> options = new ArrayList<>();
         Coordinate coordinate = getHorizontalOption(board, from, true);

@@ -10,4 +10,8 @@ public class MoveQueen {
         return move;
     }
 
+    public static boolean doesQueenHaveMoveOptions(Board board, Coordinate queen){
+        return MoveCommon.getCoordinatesInRange(board, queen, 1, false).size()>0;
+    }
+
 }

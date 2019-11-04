@@ -1,6 +1,6 @@
 package hive;
 
-import hive.movement.MoveCommon;
+import hive.movement.*;
 import nl.hanze.hive.Hive;
 
 import java.util.ArrayList;
@@ -103,7 +103,46 @@ public class HiveGame implements Hive {
 
     @Override
     public void pass() throws IllegalMove {
+        for(Tile t: Tile.values()){
+            if(canMakeAMove(turn, t)){
+                throw new IllegalMove("Player can still make a move! (" + t.name() + ")");
+            }
+        }
         switchPlayerTurn();
+    }
+
+    public boolean canMakeAMove(Player player, Tile tileType){
+        ArrayList<Coordinate> tilesInPlay = board.getTileLocations(tileType, player);
+        for(Coordinate coord: tilesInPlay){
+            switch(tileType){
+                case QUEEN_BEE:
+                    if(MoveQueen.doesQueenHaveMoveOptions(board, coord)){
+                        return true;
+                    }
+                    break;
+                case SPIDER:
+                    if(MoveSpider.doesSpiderHaveMoveOptions(board, coord)){
+                        return true;
+                    }
+                    break;
+                case GRASSHOPPER:
+                    if(MoveGrassHopper.doesGrassHopperHaveMoveOptions(board, coord)){
+                        return true;
+                    }
+                    break;
+                case BEETLE:
+                    if(MoveBeetle.doesBeetleHaveMoveOptions(board, coord)){
+                        return true;
+                    }
+                    break;
+                case SOLDIER_ANT:
+                    if(MoveAnt.doesAntHaveMoveOptions(board, coord)){
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
     }
 
     @Override

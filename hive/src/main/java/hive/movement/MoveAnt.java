@@ -11,4 +11,8 @@ public class MoveAnt {
         ArrayList<Coordinate> possibleOptions = MoveCommon.getCoordinatesInRange(board, from, Integer.MAX_VALUE, false);
         return possibleOptions.contains(to);
     }
+
+    public static boolean doesAntHaveMoveOptions(Board board, Coordinate ant){
+        return MoveCommon.getCoordinatesInRange(board, ant, Integer.MAX_VALUE, false).size()>0;
+    }
 }
