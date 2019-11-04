@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Skyerzz-LAPOTOP on 30/10/2019.
@@ -91,9 +91,8 @@ public class CommonMoveTest {
         board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 2));
         //open position -1,2
         //range 2 should give -1,1 - -1,2 - 0,1
-        MoveCommon moveCommon = new MoveCommon();
-        ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(board, new Coordinate(0, 0), 2, false);
-        assertTrue(coords.size()==3);
+        ArrayList<Coordinate> coords = MoveCommon.getCoordinatesInRange(board, new Coordinate(0, 0), 2, false);
+        assertEquals(3, coords.size());
         assertTrue(coords.contains(new Coordinate(-1, 1)));
         assertTrue(coords.contains(new Coordinate(-1, 2)));
         assertTrue(coords.contains(new Coordinate(0, 1)));
@@ -106,6 +105,11 @@ public class CommonMoveTest {
         board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, -1));
         board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(1, -1));
         board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 1));
+        //route to connections
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 2));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(1, 1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(2, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(2, -1));
         MoveCommon moveCommon = new MoveCommon();
         ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(board, new Coordinate(0, 0), 1, false);
         assertTrue(coords.size()==2);
@@ -125,10 +129,56 @@ public class CommonMoveTest {
         board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-2, 1));
         board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-2, 2));
 
-        MoveCommon moveCommon = new MoveCommon();
-        ArrayList<Coordinate> coords = moveCommon.getCoordinatesInRange(board, new Coordinate(-1, 1), 1, false);
-        assertTrue(coords.size()==2);
+        ArrayList<Coordinate> coords = MoveCommon.getCoordinatesInRange(board, new Coordinate(-1, 1), 1, false);
+        assertEquals(2, coords.size());
         assertTrue(coords.contains(new Coordinate(0, 0)));
         assertTrue(coords.contains(new Coordinate(-1, 2)));
+    }
+
+    @Test
+    void getCoordinatesInOneStepsMovementOptions(){
+        Board board = new Board();
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 1));
+        ArrayList<Coordinate> coords = MoveCommon.getCoordinatesInStepAmount(board, new Coordinate(0, 0), 1);
+
+        assertEquals(2, coords.size());
+        assertTrue(coords.contains(new Coordinate(1, 0)));
+        assertTrue(coords.contains(new Coordinate(-1, 1)));
+
+    }
+
+    @Test
+    void getCoordinatesInThreeStepsMovementOptions(){
+        Board board = new Board();
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 1));
+        ArrayList<Coordinate> coords = MoveCommon.getCoordinatesInStepAmount(board, new Coordinate(0, 0), 3);
+
+        assertEquals(1, coords.size());
+        assertTrue(coords.contains(new Coordinate(0, 2)));
+
+    }
+
+    @Test
+    void breakChainFully(){
+        Board board = new Board();
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, -1));
+
+        assertTrue(MoveCommon.breaksChain(board, new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 0)));
+    }
+
+    @Test
+    void testChainWithoutBreakingWhileMoving(){
+        Board board = new Board();
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, 1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(0, -1));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 0));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(-1, 1));
+
+        assertFalse(MoveCommon.breaksChain(board, new Coordinate(0, 0), new Coordinate(1, 0), new Coordinate(0, 0)));
     }
 }

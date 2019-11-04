@@ -39,6 +39,11 @@ public class QueenMoveTest {
         board.placeTile(Hive.Player.BLACK, Hive.Tile.BEETLE, new Coordinate(0, 1));
         board.placeTile(Hive.Player.BLACK, Hive.Tile.BEETLE, new Coordinate(-1, 0));
 
+        //to keep connection
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.BEETLE, new Coordinate(-1, 2));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.BEETLE, new Coordinate(-2, 2));
+        board.placeTile(Hive.Player.BLACK, Hive.Tile.BEETLE, new Coordinate(-2, 1));
+
         assertTrue(MoveQueen.canQueenMove(board, new Coordinate(0, 0), new Coordinate(0,-1)));
         assertTrue(MoveQueen.canQueenMove(board, new Coordinate(0, 0), new Coordinate(1,-1)));
 
