@@ -108,12 +108,12 @@ public class Board {
     }
 
     private void recursiveAddToList(ArrayList<BoardTile> list, Coordinate position) {
-        var tiles = getBoardPosition(position);
+        Stack<BoardTile> tiles = getBoardPosition(position);
         if (tiles.isEmpty()) return;
-        for (var tile : tiles) {
+        for (BoardTile tile : tiles) {
             if (!list.contains(tile)) {
                 list.add(tile);
-                for (var c : position.adjacentCoordinates()) {
+                for (Coordinate c : position.adjacentCoordinates()) {
                     recursiveAddToList(list, c);
                 }
             }
@@ -129,5 +129,9 @@ public class Board {
             }
         }
         return empty;
+    }
+
+    public int amountOfCoordinatesOccupied(){
+        return tileCount;
     }
 }

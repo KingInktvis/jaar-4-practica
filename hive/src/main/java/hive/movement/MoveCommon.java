@@ -18,7 +18,7 @@ public class MoveCommon {
         }
         switch (tile.getType()) {
             case QUEEN_BEE:
-                return queenMovement(board, from, to);
+                return MoveQueen.canQueenMove(board, from, to);
             case SPIDER:
                 break;
             case BEETLE:
@@ -59,7 +59,7 @@ public class MoveCommon {
                 visitedNodes.add(current);
                 ArrayList<Coordinate> neighbours = canMoveThroughTiles ? current.adjacentCoordinates() : board.getEmptyAdjacentLocations(current);
                 if (!canMoveThroughTiles) {
-                    neighbours = filterNeighboursThroughMovement(board, neighbours, current);
+                    neighbours = filterNeighboursThroughMovement(board, neighbours, current, startposition);
                 }
                 for (Coordinate neigh : neighbours) {
                     if (!coordinatesInRange.contains(neigh)) {
@@ -74,10 +74,38 @@ public class MoveCommon {
         return coordinatesInRange;
     }
 
-    public static ArrayList<Coordinate> filterNeighboursThroughMovement(Board board, ArrayList<Coordinate> neighbours, Coordinate startPosition) {
+    public static ArrayList<Coordinate> getCoordinatesInStepAmount(Board board, Coordinate center, int steps){
+        ArrayList<Coordinate> queue = new ArrayList<>(){};
+        ArrayList<Coordinate> visitedCoords = new ArrayList<>();
+        queue.add(center);
+        while(steps-->0){
+            ArrayList<Coordinate> newQueue = new ArrayList<>();
+            while(!queue.isEmpty()){
+                Coordinate coord = queue.remove(0);
+                if(visitedCoords.contains(coord)){
+                    continue;
+                }
+                visitedCoords.add(coord);
+                ArrayList<Coordinate> neighbours = coord.adjacentCoordinates();
+                neighbours = filterNeighboursThroughMovement(board, neighbours, coord, center);
+                for(Coordinate neigh: neighbours){
+                    if(!newQueue.contains(neigh) && !visitedCoords.contains(neigh)){
+                        newQueue.add(neigh);
+                    }
+                }
+            }
+            if(steps==0){
+                return filterNoNeighbours(board, center, newQueue);
+            }
+            queue.addAll(newQueue);
+        }
+        return null;
+    }
+
+    public static ArrayList<Coordinate> filterNeighboursThroughMovement(Board board, ArrayList<Coordinate> neighbours, Coordinate startPosition, Coordinate originalPosition) {
         ArrayList<Coordinate> neighboursToReturn = new ArrayList<>();
         for (Coordinate neigh : neighbours) {
-            if (!stayConnectedOneStep(board, startPosition, neigh)) {
+            if (!stayConnectedOneStep(board, startPosition, neigh) || breaksChain(board, startPosition, neigh, originalPosition)) {
                 continue;
             }
             ArrayList<Coordinate> commonNeighbours = neigh.commonNeighbours(startPosition);
@@ -89,6 +117,25 @@ public class MoveCommon {
             }
         }
         return neighboursToReturn;
+    }
+
+    public static boolean breaksChain(Board board, Coordinate fromPosition, Coordinate toPosition, Coordinate originalPosition){
+        ArrayList<Coordinate> visitedCoords = new ArrayList<>();
+        ArrayList<Coordinate> queue = new ArrayList<>();
+        queue.add(toPosition);
+        while(!queue.isEmpty()){
+            Coordinate coord = queue.remove(0);
+            if(visitedCoords.contains(coord) || coord.equals(fromPosition) || coord.equals(originalPosition)){
+                continue;
+            }
+            visitedCoords.add(coord);
+            for(Coordinate neighbour: coord.adjacentCoordinates()){
+                if(board.getTile(neighbour)!=null && !neighbour.equals(fromPosition)){
+                    queue.add(neighbour);
+                }
+            }
+        }
+        return board.amountOfCoordinatesOccupied()!=visitedCoords.size();
     }
 
     private static ArrayList<Coordinate> filterNoNeighbours(Board board, Coordinate fromPosition, ArrayList<Coordinate> options){
@@ -123,20 +170,6 @@ public class MoveCommon {
     public static boolean gapForMovement(Board board, Coordinate from, Coordinate to) {
         var shared = from.commonNeighbours(to);
         return board.getTile(shared.get(0)) == null || board.getTile(shared.get(1)) == null;
-    }
-
-    private static boolean queenMovement(Board board, Coordinate from, Coordinate to) throws Hive.IllegalMove {
-        if (!from.areNeighbours(to) || from.equals(to)) {
-            return false;
-        }
-        if (stayConnectedOneStep(board, from, to) && gapForMovement(board, from, to)) {
-            board.moveTile(from, to);
-            boolean value = board.allTilesConnected();
-            board.moveTile(to, from);
-            return value;
-        } else {
-            return false;
-        }
     }
 
 
