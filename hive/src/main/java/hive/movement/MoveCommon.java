@@ -1,6 +1,7 @@
 package hive.movement;
 
 import hive.Board;
+import hive.BoardTile;
 import hive.Coordinate;
 import nl.hanze.hive.Hive;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class MoveCommon {
 
     public static boolean isValidMove(Board board, Coordinate from, Coordinate to){
-        var tile = board.getTile(from);
+        BoardTile tile = board.getTile(from);
         if (!isCommonValidMove(board, from, to)) {
             return false;
         }
@@ -152,7 +153,7 @@ public class MoveCommon {
     }
 
     public static boolean checkAdjacentToTileWithOneStep(Board board, Coordinate to) {
-        var neighbours = board.getNeighbours(to);
+        ArrayList<BoardTile> neighbours = board.getNeighbours(to);
         if (neighbours.size() <= 1) {
             return false;
         }
@@ -164,12 +165,12 @@ public class MoveCommon {
     }
 
     public static boolean stayConnectedOneStep(Board board, Coordinate from, Coordinate to) {
-        var shared = from.commonNeighbours(to);
+        ArrayList<Coordinate> shared = from.commonNeighbours(to);
         return board.getTile(shared.get(0)) != null || board.getTile(shared.get(1)) != null;
     }
 
     public static boolean gapForMovement(Board board, Coordinate from, Coordinate to) {
-        var shared = from.commonNeighbours(to);
+        ArrayList<Coordinate> shared = from.commonNeighbours(to);
         return board.getTile(shared.get(0)) == null || board.getTile(shared.get(1)) == null;
     }
 

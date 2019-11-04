@@ -11,16 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BoardTest {
     @Test
     void placeTileOnEmptyBoard() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(1, 1));
-        var tile = board.getTile(new Coordinate(1, 1));
+        BoardTile tile = board.getTile(new Coordinate(1, 1));
         assertEquals(Tile.QUEEN_BEE, tile.getType());
         assertEquals(Player.WHITE, tile.getPlayer());
     }
 
     @Test
     void moveNonExistentTile() {
-        var board = new Board();
+        Board board = new Board();
         assertThrows(Hive.IllegalMove.class, () -> {
             board.moveTile(new Coordinate(1, 1), new Coordinate(1, 2));
         });
@@ -28,13 +28,13 @@ class BoardTest {
 
     @Test
     void inPlayOnEmptyBoard() {
-        var board = new Board();
+        Board board = new Board();
         assertEquals(0, board.inPlayOf(Player.WHITE, Tile.BEETLE));
     }
 
     @Test
     void inPlayTileBelongingToOnePlayer() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.BEETLE, new Coordinate(1, 1));
         assertEquals(1, board.inPlayOf(Player.WHITE, Tile.BEETLE));
         assertEquals(0, board.inPlayOf(Player.BLACK, Tile.BEETLE));
@@ -42,7 +42,7 @@ class BoardTest {
 
     @Test
     void inPlayWithStackedTiles() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.BEETLE, new Coordinate(1, 1));
         board.placeTile(Player.BLACK, Tile.BEETLE, new Coordinate(1, 1));
         assertEquals(1, board.inPlayOf(Player.WHITE, Tile.BEETLE));
@@ -51,7 +51,7 @@ class BoardTest {
 
     @Test
     void testNeighbours() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.BEETLE, new Coordinate(0, 0));
         board.placeTile(Player.BLACK, Tile.BEETLE, new Coordinate(-1, 1));
         board.placeTile(Player.BLACK, Tile.BEETLE, new Coordinate(-1, 1));
@@ -62,7 +62,7 @@ class BoardTest {
 
     @Test
     void testNeighboursWhenFullySurrounded() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.BEETLE, new Coordinate(0, 0));
         board.placeTile(Player.WHITE, Tile.BEETLE, new Coordinate(-1, 0));
         board.placeTile(Player.WHITE, Tile.BEETLE, new Coordinate(0, -1));

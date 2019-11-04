@@ -28,19 +28,19 @@ public class HiveGame implements Hive {
 
     @Override
     public void play(Tile tile, int q, int r) throws IllegalMove {
-        var coordinate = new Coordinate(q, r);
-        var existing = board.getTile(coordinate);
+        Coordinate coordinate = new Coordinate(q, r);
+        BoardTile existing = board.getTile(coordinate);
         if (existing != null) {
             throw new IllegalMove();
         }
-        var neighbours = board.getNeighbours(coordinate);
+        ArrayList<BoardTile> neighbours = board.getNeighbours(coordinate);
         // Throws an exception if there are no tiles next to the location except when it is the first turn
         if ((!firstTurn || turn == Player.BLACK) && neighbours.size() == 0) {
             throw new IllegalMove();
         }
         // Throw exception if all of these kind of tiles are already in play
-        var currentlyInPlay = board.inPlayOf(turn, tile);
-        var limit = tileLimit.get(tile);
+        int currentlyInPlay = board.inPlayOf(turn, tile);
+        int limit = tileLimit.get(tile);
         if (currentlyInPlay >= limit) {
             throw new IllegalMove();
         }
@@ -48,8 +48,8 @@ public class HiveGame implements Hive {
 
         // Throw exception if there already 3 or more of the players tiles placed on the board and the queen is not
         if (tile != Tile.QUEEN_BEE && board.inPlayOf(turn, Tile.QUEEN_BEE) == 0) {
-            var count = 0;
-            for (var t : Tile.values()) {
+            int count = 0;
+            for (Tile t : Tile.values()) {
                 count += board.inPlayOf(turn, t);
             }
             if (count >= 3) {
@@ -68,7 +68,7 @@ public class HiveGame implements Hive {
     private void connectedToTile(ArrayList<BoardTile> neighbours) throws IllegalMove {
         // Can not place a tile next to the opponent after turn 1
         if (!firstTurn) {
-            for (var t : neighbours) {
+            for (BoardTile t : neighbours) {
                 if (t.getPlayer() != turn) {
                     throw new IllegalMove();
                 }
@@ -92,8 +92,8 @@ public class HiveGame implements Hive {
         if (board.inPlayOf(turn, Tile.QUEEN_BEE) == 0) {
             throw new IllegalMove();
         }
-        var from = new Coordinate(fromQ, fromR);
-        var to = new Coordinate(toQ, toR);
+        Coordinate from = new Coordinate(fromQ, fromR);
+        Coordinate to = new Coordinate(toQ, toR);
         if (!MoveCommon.isValidMove(board, from, to)) {
             throw new IllegalMove();
         }
@@ -108,17 +108,17 @@ public class HiveGame implements Hive {
 
     @Override
     public boolean isWinner(Player player) {
-        var opponent = getOpponent(player);
+        Player opponent = getOpponent(player);
         return !isDraw() && queenSurrounded(opponent);
     }
 
     private boolean queenSurrounded(Player player) {
-        var locations = board.getTileLocations(Tile.QUEEN_BEE, player);
+        ArrayList<Coordinate> locations = board.getTileLocations(Tile.QUEEN_BEE, player);
         if (locations.isEmpty()) {
             return false;
         }
-        var queen = locations.get(0);
-        var tmp = board.getNeighbours(queen);
+        Coordinate queen = locations.get(0);
+        ArrayList<BoardTile> tmp = board.getNeighbours(queen);
         return tmp.size() == 6;
     }
 

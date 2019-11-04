@@ -6,6 +6,7 @@ import nl.hanze.hive.Hive.Tile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 public class Board {
@@ -17,9 +18,9 @@ public class Board {
     }
 
     private Stack<BoardTile> getBoardPosition(Coordinate coordinate) {
-        var position = board.get(coordinate);
+        Stack<BoardTile> position = board.get(coordinate);
         if (position == null) {
-            var stack = new Stack<BoardTile>();
+            Stack<BoardTile> stack = new Stack<BoardTile>();
             board.put(coordinate, stack);
             position = board.get(coordinate);
         }
@@ -27,14 +28,14 @@ public class Board {
     }
 
     public void placeTile(Player player, Tile tile, Coordinate coordinate) {
-        var newTile = new BoardTile(tile, player);
-        var position = getBoardPosition(coordinate);
+        BoardTile newTile = new BoardTile(tile, player);
+        Stack<BoardTile> position = getBoardPosition(coordinate);
         position.push(newTile);
         ++tileCount;
     }
 
     public BoardTile getTile(Coordinate coordinate) {
-        var position = getBoardPosition(coordinate);
+        Stack<BoardTile> position = getBoardPosition(coordinate);
         if (position.empty()) {
             return null;
         }
@@ -42,19 +43,19 @@ public class Board {
     }
 
     public void moveTile(Coordinate origin, Coordinate destination) throws Hive.IllegalMove {
-        var ogPosition = getBoardPosition(origin);
+        Stack<BoardTile> ogPosition = getBoardPosition(origin);
         if (ogPosition.empty()) {
             throw new Hive.IllegalMove();
         }
-        var next = getBoardPosition(destination);
-        var tile = ogPosition.pop();
+        Stack<BoardTile> next = getBoardPosition(destination);
+        BoardTile tile = ogPosition.pop();
         next.push(tile);
     }
 
     int inPlayOf(Player player, Tile tile) {
-        var count = 0;
-        for (var position : board.entrySet()) {
-            for (var entry : position.getValue()) {
+        int count = 0;
+        for (Map.Entry<Coordinate, Stack<BoardTile>> position : board.entrySet()) {
+            for (BoardTile entry : position.getValue()) {
                 if (entry.getType() == tile && entry.getPlayer() == player) {
                     ++count;
                 }
@@ -64,9 +65,9 @@ public class Board {
     }
 
     ArrayList<Coordinate> getTileLocations(Tile tile, Player player) {
-        var list = new ArrayList<Coordinate>();
-        for (var position : board.entrySet()) {
-            for (var entry : position.getValue()) {
+        ArrayList<Coordinate> list = new ArrayList<Coordinate>();
+        for (Map.Entry<Coordinate, Stack<BoardTile>> position : board.entrySet()) {
+            for (BoardTile entry : position.getValue()) {
                 if (entry.getType() == tile && entry.getPlayer() == player) {
                     list.add(position.getKey());
                 }
@@ -76,10 +77,10 @@ public class Board {
     }
 
     public ArrayList<BoardTile> getNeighbours(Coordinate coordinate) {
-        var list = new ArrayList<BoardTile>();
-        var locations = coordinate.adjacentCoordinates();
-        for (var location : locations) {
-            var position = getBoardPosition(location);
+        ArrayList<BoardTile> list = new ArrayList<BoardTile>();
+        ArrayList<Coordinate> locations = coordinate.adjacentCoordinates();
+        for (Coordinate location : locations) {
+            Stack<BoardTile> position = getBoardPosition(location);
             if (!position.isEmpty()) {
                 list.add(position.peek());
             }
@@ -93,8 +94,8 @@ public class Board {
 
     public boolean allTilesConnected() {
         Coordinate start = null;
-        var list = new ArrayList<BoardTile>();
-        for (var position : board.entrySet()) {
+        ArrayList<BoardTile> list = new ArrayList<BoardTile>();
+        for (Map.Entry<Coordinate, Stack<BoardTile>> position : board.entrySet()) {
             if (!position.getValue().isEmpty()) {
                 start = position.getKey();
                 break;
@@ -121,9 +122,9 @@ public class Board {
     }
 
     public ArrayList<Coordinate> getEmptyAdjacentLocations(Coordinate coordinate) {
-        var adjacent = coordinate.adjacentCoordinates();
-        var empty = new ArrayList<Coordinate>();
-        for (var tile : adjacent) {
+        ArrayList<Coordinate> adjacent = coordinate.adjacentCoordinates();
+        ArrayList<Coordinate> empty = new ArrayList<Coordinate>();
+        for (Coordinate tile : adjacent) {
             if (getTile(tile) == null) {
                 empty.add(tile);
             }

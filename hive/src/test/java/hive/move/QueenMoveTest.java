@@ -2,8 +2,6 @@ package hive.move;
 
 import hive.Board;
 import hive.Coordinate;
-import hive.Move;
-import hive.movement.MoveBeetle;
 import hive.movement.MoveQueen;
 import nl.hanze.hive.Hive;
 import org.junit.jupiter.api.Test;

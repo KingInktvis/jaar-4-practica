@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MoveTest {
     @Test
     void afterMoveHasToBeAdjacentNextToAnotherTile() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, 0));
         board.placeTile(Player.BLACK, Tile.QUEEN_BEE, new Coordinate(1, 0));
         assertFalse(MoveCommon.checkAdjacentToTileWithOneStep(board, new Coordinate(2, 0)));
@@ -20,7 +20,7 @@ class MoveTest {
 
     @Test
     void areAllTilesConnected() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, 0));
         board.placeTile(Player.BLACK, Tile.QUEEN_BEE, new Coordinate(1, 0));
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(2, 0));
@@ -30,7 +30,7 @@ class MoveTest {
 
     @Test
     void tilesStayConnectedDuringMovement() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, -1));
         board.placeTile(Player.BLACK, Tile.QUEEN_BEE, new Coordinate(1, -1));
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(-1, 0));
@@ -45,7 +45,7 @@ class MoveTest {
 
     @Test
     void testGapForMovement() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, -1));
         board.placeTile(Player.BLACK, Tile.QUEEN_BEE, new Coordinate(1, -1));
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(-1, 0));
@@ -61,7 +61,7 @@ class MoveTest {
 
     @Test
     void noMoveSpace() {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, 0));
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(1, -1));
         board.placeTile(Player.BLACK, Tile.SPIDER, new Coordinate(0, 1));
@@ -71,7 +71,7 @@ class MoveTest {
 
     @Test
     void testAntMovement() throws Hive.IllegalMove {
-        var board = new Board();
+        Board board = new Board();
         board.placeTile(Player.WHITE, Tile.QUEEN_BEE, new Coordinate(0, -1));
         board.placeTile(Player.BLACK, Tile.QUEEN_BEE, new Coordinate(1, -1));
         board.placeTile(Player.BLACK, Tile.SOLDIER_ANT, new Coordinate(-1, 0));
