@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 public class MoveCommon {
 
-    public static boolean isValidMove(Board board, Coordinate from, Coordinate to) throws Hive.IllegalMove {
+    public static boolean isValidMove(Board board, Coordinate from, Coordinate to){
         var tile = board.getTile(from);
         if (!isCommonValidMove(board, from, to)) {
             return false;
@@ -20,15 +20,16 @@ public class MoveCommon {
             case QUEEN_BEE:
                 return MoveQueen.canQueenMove(board, from, to);
             case SPIDER:
-                break;
+                return MoveSpider.canSpiderMove(board, from, to);
             case BEETLE:
                 return MoveBeetle.canBeetleMove(board, from, to);
             case GRASSHOPPER:
-                break;
+                return MoveGrassHopper.canGrassHopperMove(board, from, to);
             case SOLDIER_ANT:
                 return MoveAnt.canAntMove(board, from, to);
         }
-        return true;
+        //it should never get here
+        return false;
     }
 
     public static boolean isCommonValidMove(Board board, Coordinate from, Coordinate to) {
