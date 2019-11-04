@@ -12,11 +12,11 @@ public class Coordinate {
         this.r = r;
     }
 
-    int getQ() {
+    public int getQ() {
         return q;
     }
 
-    int getR() {
+    public int getR() {
         return r;
     }
 
