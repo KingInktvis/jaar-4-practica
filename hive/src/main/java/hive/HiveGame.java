@@ -32,24 +32,27 @@ public class HiveGame implements Hive {
             throw new IllegalMove("The game is already over!");
         }
         Coordinate coordinate = new Coordinate(q, r);
-        BoardTile existing = board.getTile(coordinate);
-        if (existing != null) {
-            throw new IllegalMove();
-        }
         ArrayList<BoardTile> neighbours = board.getNeighbours(coordinate);
-        // Throws an exception if there are no tiles next to the location except when it is the first turn
-        if ((!firstTurn || turn == Player.BLACK) && neighbours.size() == 0) {
+        // Throws an exception if there is already a tile, or are no tiles next to the location except when it is the first turn
+        if (board.getTile(coordinate) != null || ((!firstTurn || turn == Player.BLACK) && neighbours.size() == 0)) {
             throw new IllegalMove();
         }
         // Throw exception if all of these kind of tiles are already in play
-        int currentlyInPlay = board.inPlayOf(turn, tile);
-        int limit = tileLimit.get(tile);
-        if (currentlyInPlay >= limit) {
+        if (board.inPlayOf(turn, tile) >= tileLimit.get(tile)) {
             throw new IllegalMove();
         }
         connectedToTile(neighbours); //throws exception if its connected to an opponents tile
-
         // Throw exception if there already 3 or more of the players tiles placed on the board and the queen is not
+        isQueenPlayedCheck(tile);
+        board.placeTile(turn, tile, coordinate);
+        // Change the value of first turn after the first turn
+        if (firstTurn && turn == Player.BLACK) {
+            firstTurn = false;
+        }
+        switchPlayerTurn();
+    }
+
+    private void isQueenPlayedCheck(Tile tile) throws IllegalMove {
         if (tile != Tile.QUEEN_BEE && board.inPlayOf(turn, Tile.QUEEN_BEE) == 0) {
             int count = 0;
             for (Tile t : Tile.values()) {
@@ -59,13 +62,6 @@ public class HiveGame implements Hive {
                 throw new IllegalMove();
             }
         }
-
-        board.placeTile(turn, tile, coordinate);
-        // Change the value of first turn after the first turn
-        if (firstTurn && turn == Player.BLACK) {
-            firstTurn = false;
-        }
-        switchPlayerTurn();
     }
 
     private void connectedToTile(ArrayList<BoardTile> neighbours) throws IllegalMove {
