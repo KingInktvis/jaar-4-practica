@@ -78,13 +78,13 @@ def predictNumber(Theta1, Theta2, X):
     # Voeg enen toe aan het begin van elke stap en reshape de uiteindelijke
     # vector zodat deze dezelfde dimensionaliteit heeft als y in de exercise.
     m, n = X.shape
-    X2 = np.c_[np.ones(m), X]
-    X3 = X2.dot(Theta1.T)
-    X3 = sigmoid(X3)
-    X4 = np.c_[np.ones(X3.shape[0]), X3]
-    X5 = X4.dot(Theta2.T)
-    X6 = sigmoid(X5)
-    return X6
+    a1 = np.c_[np.ones(m), X]
+    z2 = a1.dot(Theta1.T)
+    a2 = sigmoid(z2)
+    a2 = np.c_[np.ones(a2.shape[0]), a2]
+    z3 = a2.dot(Theta2.T)
+    a3 = sigmoid(z3)
+    return a3
 
 
 # ===== deel 2: =====
@@ -125,9 +125,27 @@ def nnCheckGradients(Theta1, Theta2, X, y):
     # Retourneer de gradiënten van Theta1 en Theta2, gegeven de waarden van X en van y
     # Zie het stappenplan in de opgaven voor een mogelijke uitwerking.
 
-    Delta2 = np.zeros(Theta1.shape)
-    Delta3 = np.zeros(Theta2.shape)
+    #copy paste 2c deel 1
+    m, n = X.shape
+    a1 = np.c_[np.ones(m), X]
+    z2 = a1.dot(Theta1.T)
+    a2 = sigmoid(z2)
+    a2 = np.c_[np.ones(a2.shape[0]), a2]
+    z3 = a2.dot(Theta2.T)
+    a3 = sigmoid(z3)
+    #end copy paste
+
+    y = get_y_matrix(y, m)
+    delta3 = a3 - y
+    delta2 = Theta2.T.dot(delta3.T) * sigmoidGradient(z2)
+    Delta3 = delta3.T.dot(a2)
+    Delta2 = delta2.dot(a1)
+
+    # Delta2 = np.zeros(Theta1.shape)
+    # Delta3 = np.zeros(Theta2.shape)
     m = 1  # voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
+
+
 
     for i in range(m):
         # YOUR CODE HERE

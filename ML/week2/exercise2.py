@@ -130,7 +130,7 @@ print("Aanroepen van de methode sigmoidGradient met de waarden [-1, -0.5, 0, 0.5
 print(sigmoidGradient(np.array([[-1, -0.5, 0, 0.5, 1]])))
 print("Dit zou als resultaat de volgende lijste moeten hebben")
 print("[ 0.19661193  0.23500371  0.25  0.23500371  0.19661193]")
-input("Druk op Return om verder te gaan...")
+# input("Druk op Return om verder te gaan...")
 
 print("")
 print("Aanroepen van de methode nnCheckGradients met initiële waarden van de Theta's.")
