@@ -16,6 +16,7 @@ public class BeetleMovementTest {
         Board board = new Board();
         board.placeTile(Hive.Player.BLACK, Hive.Tile.BEETLE, new Coordinate(0, 0));
         board.placeTile(Hive.Player.BLACK, Hive.Tile.QUEEN_BEE, new Coordinate(1, 0));
+        assertTrue(MoveBeetle.doesBeetleHaveMoveOptions(board, new Coordinate(0, 0)));
         assertTrue(MoveBeetle.canBeetleMove(board, new Coordinate(0, 0), new Coordinate(1,-1)));
         assertTrue(MoveBeetle.canBeetleMove(board, new Coordinate(0, 0), new Coordinate(0,1)));
         //its not allowed on top if it doesnt connect to another tile (which there are none of right now)

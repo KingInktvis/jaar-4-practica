@@ -28,6 +28,9 @@ public class HiveGame implements Hive {
 
     @Override
     public void play(Tile tile, int q, int r) throws IllegalMove {
+        if(isGameOver()){
+            throw new IllegalMove("The game is already over!");
+        }
         Coordinate coordinate = new Coordinate(q, r);
         BoardTile existing = board.getTile(coordinate);
         if (existing != null) {
@@ -44,7 +47,7 @@ public class HiveGame implements Hive {
         if (currentlyInPlay >= limit) {
             throw new IllegalMove();
         }
-        connectedToTile(neighbours);
+        connectedToTile(neighbours); //throws exception if its connected to an opponents tile
 
         // Throw exception if there already 3 or more of the players tiles placed on the board and the queen is not
         if (tile != Tile.QUEEN_BEE && board.inPlayOf(turn, Tile.QUEEN_BEE) == 0) {
@@ -89,6 +92,9 @@ public class HiveGame implements Hive {
 
     @Override
     public void move(int fromQ, int fromR, int toQ, int toR) throws IllegalMove {
+        if(isGameOver()){
+            throw new IllegalMove("The game is already over!");
+        }
         if (board.inPlayOf(turn, Tile.QUEEN_BEE) == 0) {
             throw new IllegalMove();
         }
@@ -101,8 +107,15 @@ public class HiveGame implements Hive {
         switchPlayerTurn();
     }
 
+    public boolean isGameOver(){
+        return isWinner(Player.BLACK) || isWinner(Player.WHITE) || isDraw();
+    }
+
     @Override
     public void pass() throws IllegalMove {
+        if(isGameOver()){
+            throw new IllegalMove("Game already ended!");
+        }
         for(Tile t: Tile.values()){
             if(canMakeAMove(turn, t)){
                 throw new IllegalMove("Player can still make a move! (" + t.name() + ")");

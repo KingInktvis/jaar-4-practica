@@ -88,10 +88,6 @@ public class Board {
         return list;
     }
 
-    private ArrayList<Coordinate> neighbouringCoordinates(Coordinate coordinate) {
-        return coordinate.adjacentCoordinates();
-    }
-
     public boolean allTilesConnected() {
         Coordinate start = null;
         ArrayList<BoardTile> list = new ArrayList<BoardTile>();
