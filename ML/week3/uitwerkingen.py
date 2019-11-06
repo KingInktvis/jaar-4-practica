@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+from keras.models import Sequential
 
 # OPGAVE 1a
 def plotImage(img, label):
@@ -10,7 +11,10 @@ def plotImage(img, label):
     # Maak gebruik van plt.cm.binary voor de cmap-parameter van plt.imgshow.
 
     # YOUR CODE HERE
-
+    plt.imshow(img, cmap=plt.cm.binary, interpolation='nearest')
+    plt.title(label)
+    plt.axis('off')
+    plt.show()
     pass
 
 
@@ -22,8 +26,10 @@ def scaleData(X):
     # Deel alle elementen in de matrix 'element wise' door de grootste waarde in deze matrix.
 
     # YOUR CODE HERE
+    max_value = np.amax(X)
+    offset = np.full(X.shape, 1 / max_value)
+    return X * offset
 
-    pass
 
 # OPGAVE 1c
 def buildModel():
@@ -35,24 +41,37 @@ def buildModel():
     # output-laag. Compileer het netwerk vervolgens met de gegevens die in opgave gegeven zijn
     # en retourneer het resultaat.
 
-    model = None
+    from keras.models import Sequential
+    from keras.layers import Dense, Activation, Flatten
 
-    # YOUR CODE HERE
-
+    model = keras.Sequential([
+        keras.layers.Flatten(input_shape=(28, 28)),
+        keras.layers.Dense(128, activation='relu'),
+        keras.layers.Dense(10, activation='softmax')
+    ])
+    model.compile(optimizer='adam',
+                  loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
     return model
 
 
 # OPGAVE 2a
-def confMatrix(labels, pred):
+def confMatrix(labels, predictions):
     # Retourneer de econfusion matrix op basis van de gegeven voorspelling (pred) en de actuele
     # waarden (labels). Check de documentatie van tf.math.confusion_matrix
-    
-    # YOUR CODE HERE
-    pass
+    tmp = tf.math.confusion_matrix(
+        labels,
+        predictions,
+        num_classes=None,
+        weights=None,
+        dtype=tf.dtypes.int32,
+        name=None
+    )
+    return tmp
 
 
 # OPGAVE 2b
-def confEls(conf, labels): 
+def confEls(conf, labels):
     # Deze methode krijgt een confusion matrix mee (conf) en een set van labels. Als het goed is, is 
     # de dimensionaliteit van de matrix gelijk aan len(labels) × len(labels) (waarom?). Bereken de 
     # waarden van de TP, FP, FN en TN conform de berekening in de opgave. Maak vervolgens gebruik van
@@ -60,11 +79,12 @@ def confEls(conf, labels):
     # als volgt is gedefinieerd:
 
     #     (categorie:string, tp:int, fp:int, fn:int, tn:int)
- 
+
     # Check de documentatie van numpy diagonal om de eerste waarde te bepalen.
- 
+
     # YOUR CODE HERE
     pass
+
 
 # OPGAVE 2c
 def confData(metrics):
@@ -74,7 +94,7 @@ def confData(metrics):
     # vorm van een dictionary (de scaffold hiervan is gegeven).
 
     # VERVANG ONDERSTAANDE REGELS MET JE EIGEN CODE
-    
+
     tp = 1
     fp = 1
     fn = 1
@@ -83,5 +103,5 @@ def confData(metrics):
     # BEREKEN HIERONDER DE JUISTE METRIEKEN EN RETOURNEER DIE 
     # ALS EEN DICTIONARY
 
-    rv = {'tpr':0, 'ppv':0, 'tnr':0, 'fpr':0 }
+    rv = {'tpr': 0, 'ppv': 0, 'tnr': 0, 'fpr': 0}
     return rv
