@@ -135,25 +135,37 @@ def nnCheckGradients(Theta1, Theta2, X, y):
     a3 = sigmoid(z3)
     #end copy paste
 
-    y = get_y_matrix(y, m)
-    delta3 = a3 - y
+    # y_matrix = get_y_matrix(y, m)
+    # delta3 = a3 - y_matrix
+    # z2p2 = sigmoidGradient(z2)
+    # delta2 = Theta2.T.dot(delta3.T).T * np.c_[np.ones(z2p2.shape[0]), z2p2]
+    # Delta3 = delta3.T.dot(a2)
+    # Delta2 = delta2.T.dot(a2)
+
+    Delta2 = np.zeros(Theta1.shape)
+    Delta3 = np.zeros(Theta2.shape)
+    loops = 10  # voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
+
+    y_matrix = get_y_matrix(y, m)
+    delta3 = a3 - y_matrix
     z2p2 = sigmoidGradient(z2)
     delta2 = Theta2.T.dot(delta3.T).T * np.c_[np.ones(z2p2.shape[0]), z2p2]
-    Delta3 = delta3.T.dot(a2)
-    Delta2 = delta2.T.dot(a2)
+    Delta3 = Delta3 + delta3.T.dot(a2)
+    Delta2 = Delta2.T
+    Delta2 = np.c_[np.ones(Delta2.shape[0]), Delta2]
+    Delta2 = Delta2.T + delta2.T.dot(a1)
 
-    # Delta2 = np.zeros(Theta1.shape)
-    # Delta3 = np.zeros(Theta2.shape)
-    m = 1  # voorbeeldwaarde; dit moet je natuurlijk aanpassen naar de echte waarde van m
-
-
-
-    for i in range(m):
+    for i in range(loops-1):
         # YOUR CODE HERE
-
+        y_matrix = get_y_matrix(y, m)
+        delta3 = a3 - y_matrix
+        z2p2 = sigmoidGradient(z2)
+        delta2 = Theta2.T.dot(delta3.T).T * np.c_[np.ones(z2p2.shape[0]), z2p2]
+        Delta3 = delta3.T.dot(a2)
+        Delta2 = delta2.T.dot(a2)
         pass
     # ones2 = np.ones
-    Delta2_grad = Delta2 / m
-    Delta3_grad = Delta3 / m
+    Delta2_grad = Delta2 / loops
+    Delta3_grad = Delta3 / loops
 
     return Delta2_grad, Delta3_grad
