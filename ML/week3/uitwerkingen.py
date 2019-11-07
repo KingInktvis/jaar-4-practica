@@ -84,8 +84,8 @@ def confEls(conf, labels):
 
     # YOUR CODE HERE
     tp = (conf * np.identity(10))
-    fp = conf - tp
-    fn = conf.T - tp
+    fp = (conf - tp).T
+    fn = (conf - tp)
     tn = conf - tp - fp - fn
 
     tp = tp.dot(np.ones((10, 1)))
