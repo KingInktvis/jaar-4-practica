@@ -83,7 +83,20 @@ def confEls(conf, labels):
     # Check de documentatie van numpy diagonal om de eerste waarde te bepalen.
 
     # YOUR CODE HERE
-    pass
+    tp = (conf * np.identity(10))
+    fp = conf - tp
+    fn = conf.T - tp
+    tn = conf - tp - fp - fn
+
+    tp = tp.dot(np.ones((10, 1)))
+    fp = fp.dot(np.ones((10, 1)))
+    fn = fn.dot(np.ones((10, 1)))
+    tn = tn.dot(np.ones((10, 1)))
+
+    ret = list()
+    for i in range(10):
+        ret.append((labels[0], tp[i][0], fp[i][0], fn[i][0], tn[i][0]))
+    return ret
 
 
 # OPGAVE 2c
@@ -95,13 +108,22 @@ def confData(metrics):
 
     # VERVANG ONDERSTAANDE REGELS MET JE EIGEN CODE
 
-    tp = 1
-    fp = 1
-    fn = 1
-    tn = 1
+    tp = 0
+    fp = 0
+    fn = 0
+    tn = 0
+    for i in range(len(metrics)):
+        tp += metrics[i][1]
+        fp += metrics[i][2]
+        fn += metrics[i][3]
+        tn += metrics[i][4]
 
     # BEREKEN HIERONDER DE JUISTE METRIEKEN EN RETOURNEER DIE 
     # ALS EEN DICTIONARY
 
-    rv = {'tpr': 0, 'ppv': 0, 'tnr': 0, 'fpr': 0}
+    tpr = tp / (tp + fn)
+    ppv = tp / (tp + fp)
+    tnr = tn / (tn + fp)
+    fpr = fp / (fp + tn)
+    rv = {'tpr': tpr, 'ppv': ppv, 'tnr': tnr, 'fpr': fpr}
     return rv
